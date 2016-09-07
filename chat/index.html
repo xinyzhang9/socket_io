@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>Socket.IO chat</title>
+    <title>chat</title>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font: 13px Helvetica, Arial; }
@@ -11,12 +11,43 @@
       #messages { list-style-type: none; margin: 0; padding: 0; }
       #messages li { padding: 5px 10px; }
       #messages li:nth-child(odd) { background: #eee; }
+      .red{
+        color: red;
+      }
+      .green{
+        color: green;
+      }
     </style>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+
+    
   </head>
   <body>
     <ul id="messages"></ul>
     <form action="">
       <input id="m" autocomplete="off" /><button>Send</button>
     </form>
+    <script>
+      var nickname = prompt('Enter your name: ');
+
+      var socket = io();
+      socket.emit('enter room',nickname);
+      $('form').submit(function(){
+        socket.emit('chat message', $('#m').val());
+        $('#m').val('');
+        return false;
+      });
+      socket.on('chat message',function(msg){
+        $('#messages').append($('<li>').text(msg));
+      });
+      socket.on('enter room',function(msg){
+         $('#messages').append($('<li class = "green">').text(msg));
+      })
+      socket.on('left room',function(msg){
+         $('#messages').append($('<li class = "red">').text(msg));
+      })
+
+    </script>
   </body>
 </html>
