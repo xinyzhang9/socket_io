@@ -5,6 +5,7 @@ some socket_io projects
 ### basic
 - [x] Set up a node server to enble chat between users.
 - [x] Use socket.io APIs to fire and respond to events.
+
 ### features
 - [ ] Broadcast a message to connected users when someone connects or disconnects
 - [ ] Add support for nicknames
