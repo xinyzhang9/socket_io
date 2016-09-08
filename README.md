@@ -18,6 +18,8 @@ open your browser at localhost:3000
 ### features
 - [x] Broadcast a message to connected users when someone connects or disconnects
 - [x] Add support for nicknames
+- [x] Add support for user avatars
+- [x] Add support for user colors
 - [x] Don’t send the same message to the user that sent it himself. Instead, append the message directly as soon as he presses enter.
 - [x] Add “{user} is typing” functionality
 - [x] Show who’s online
