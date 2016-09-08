@@ -1,5 +1,6 @@
 # socket_io
-some socket_io projects
+This repo contains my projects using socket.io with node.js.  
+Check the official website http://socket.io/ for more info.  
 
 ## chat room
 ### how to use
