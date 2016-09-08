@@ -9,8 +9,8 @@ clone or download the repo "chat"
 cd [folder that contains 'chat']
 npm install
 node server.js
-open your browser at localhost:3000
 ```
+open your browser at localhost:3000   
 ### basic
 - [x] Set up a node server to enble chat between users.
 - [x] Use socket.io APIs to fire and respond to events.
