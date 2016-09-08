@@ -4,20 +4,22 @@
     <title>chat</title>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 16px Helvetica, Arial; }
+      body { font: 18px Helvetica, Arial; padding: 10px;}
       form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
       form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
       form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
       #messages { list-style-type: none; margin: 0; padding: 0; }
       #messages li { padding: 5px 10px; }
       #messages li:nth-child(odd) { background: #eee; }
+      #status{
+        color: grey;
+      }
       .red{
         color: red;
       }
       .green{
         color: green;
       }
-      'black','orange','blue','steelblue','skyblue','purple','pink','gray','darkgreen','lightgreen'
       .orange{
         color: orange;
       }
@@ -39,14 +41,24 @@
       .gray{
         color: gray;
       }
-      .darkgreen{
-        color: darkgreen;
+      .maroon{
+        color: maroon;
       }
-      .lightgreen{
-        color: lightgreen;
+      .olive{
+        color: olive;
       }
       .right{
         text-align: right;
+      }
+      .msg{
+        display: inline-block;
+        vertical-align: middle;
+        text-align: center;
+      }
+      img{
+        width: 100px;
+        height: 100px;
+        display: inline-block;
       }
     </style>
     <script src="/socket.io/socket.io.js"></script>
@@ -55,31 +67,48 @@
     
   </head>
   <body>
+    <div id = "status">&nbsp;</div>
+    <hr>
     <ul id="messages"></ul>
     <form action="">
       <input id="m" autocomplete="off" /><button>Send</button>
     </form>
     <script>
       var nickname = prompt('Enter your name: ');
+      var userImg = "";
+      if (nickname == "xinyang" || nickname == 'zxy'){
+        userImg = "img/gengar.png";
+      }else{
+        userImg = "img/joan.jpg";
+      }
 
       var socket = io();
-      socket.emit('enter room',nickname);
+      socket.emit('enter room',{name: nickname,img:userImg});
       $('form').submit(function(){
         var msg = $('#m').val();
-        var full_msg = nickname + ' says: ' + msg;
         socket.emit('chat message', msg);
-        $('#messages').append($('<li class = "right">').text(full_msg));
+        $('#messages').append($('<li class = "right">').html('<div class ="msg"><img src = '+userImg + '></br>'+nickname+'</div>' + '&nbsp;' + '<div class = "msg" >' +msg +'</div>'));
         $('#m').val('');
         return false;
       });
+
+      $('#m').keydown(function(){
+        socket.emit('inputing',nickname);
+      });
       socket.on('chat message',function(data){
-        $('#messages').append($('<li class = '+data.color +'>').text(data.msg));
+        $('#status').html('&nbsp;');
+        $('#messages').append($('<li class = '+data.color +'>').html('<div class = "msg"><img src ='+ data.img+'></br>'+data.title+'</div>' + '&nbsp;' + '<div class = "msg">'+data.msg+'</div>'));
       });
       socket.on('enter room',function(msg){
+         $('#status').html('&nbsp;');
          $('#messages').append($('<li class = "green">').text(msg));
       })
       socket.on('left room',function(msg){
+         $('#status').html('&nbsp;');
          $('#messages').append($('<li class = "red">').text(msg));
+      })
+      socket.on('user inputing',function(msg){
+        $('#status').html(msg);
       })
 
 

@@ -1,12 +1,17 @@
-var app = require('express')();
+var express = require('express');
+var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+
+var path = require('path');
+app.use(express.static(path.join(__dirname,'./client')));
 
 app.get('/', function(req, res){
   res.sendfile('index.html');
 });
 
 var nicknames = {};
+var userImgs = {}
 var userColors = {};
 
 var djb2Code = function(str){
@@ -18,7 +23,7 @@ var djb2Code = function(str){
 	return hash;
 }
 
-var colors = ['black','orange','blue','steelblue','skyblue','purple','pink','gray','darkgreen','lightgreen'];
+var colors = ['black','orange','blue','steelblue','skyblue','purple','pink','gray','maroon','olive'];
 var getUserColor = function(str){
 	var len = colors.length;
 	var index = djb2Code(str) % len;
@@ -36,14 +41,17 @@ io.on('connection', function(socket){
   	
   	io.emit('left room',msg)
   });
-  socket.on('enter room',function(name){
+
+  socket.on('enter room',function(data){
   	//set user nickname
-  	nicknames[socket.id] = name;
+  	nicknames[socket.id] = data.name;
+  	//set user img
+  	userImgs[socket.id] = data.img;
   	//set user color
   	userColors[socket.id] = getUserColor(socket.id);
   	var msg = '';
-  	if(name){
-  		msg = "----- " + name + ' has joined the chat -----';
+  	if(data.name){
+  		msg = "----- " + data.name + ' has joined the chat -----';
   	}else{
   		msg = "----- Someone has joined the chat -----"
   	}	
@@ -51,9 +59,20 @@ io.on('connection', function(socket){
   });
 
   socket.on('chat message', function(msg){
-  	var str = nicknames[socket.id] +" says: " + msg
-    socket.broadcast.emit('chat message',{msg:str,color:userColors[socket.id]});
+  	var title = nicknames[socket.id];
+  	var msg = msg;
+    socket.broadcast.emit('chat message',{
+    	title:title,
+    	msg:msg,
+    	color:userColors[socket.id],
+    	img:userImgs[socket.id]
+    });
   });
+
+  socket.on('inputing',function(name){
+  	var msg = name + ' is inputing ...';
+  	socket.broadcast.emit('user inputing',msg);
+  })
 });
 
 http.listen(3000, function(){
