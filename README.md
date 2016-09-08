@@ -23,4 +23,4 @@ open your browser at localhost:3000
 - [ ] Add private messaging
 
 ### screenshots
-![alt tag](https://raw.githubusercontent.com/xinyzhang9/socket_io/master/screen1.png)
+![alt tag](https://raw.githubusercontent.com/xinyzhang9/socket_io/master/chat/screen1.png)
