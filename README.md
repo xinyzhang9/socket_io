@@ -2,6 +2,14 @@
 some socket_io projects
 
 ## chat room
+### how to use
+clone or download the repo "chat"
+```
+cd [folder that contains 'chat']
+npm install
+node server.js
+open your browser at localhost:3000
+```
 ### basic
 - [x] Set up a node server to enble chat between users.
 - [x] Use socket.io APIs to fire and respond to events.
@@ -11,5 +19,8 @@ some socket_io projects
 - [x] Add support for nicknames
 - [x] Don’t send the same message to the user that sent it himself. Instead, append the message directly as soon as he presses enter.
 - [x] Add “{user} is typing” functionality
-- [ ] Show who’s online
+- [x] Show who’s online
 - [ ] Add private messaging
+
+### screenshots
+![alt tag](https://raw.githubusercontent.com/xinyzhang9/socket_io/master/screen1.png)
