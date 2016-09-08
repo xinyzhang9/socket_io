@@ -14,6 +14,20 @@
       #status{
         color: grey;
       }
+      #check_online{
+        background: maroon;
+        color: white;
+        font-size: 16px;
+        padding: 2px;
+        border-radius: 10px;
+      }
+      #hide{
+        background: steelblue;
+        color: white;
+        font-size: 16px;
+        padding: 2px;
+        border-radius: 10px;
+      }
       .red{
         color: red;
       }
@@ -67,6 +81,10 @@
     
   </head>
   <body>
+    <button id = 'check_online'>show who's online</button>
+    <button id = 'hide'>hide who's online</button>
+    <br></br>
+    <div id = 'online'></div>
     <div id = "status">&nbsp;</div>
     <hr>
     <ul id="messages"></ul>
@@ -74,6 +92,7 @@
       <input id="m" autocomplete="off" /><button>Send</button>
     </form>
     <script>
+      $('#hide').hide();
       var nickname = prompt('Enter your name: ');
       var userImg = "";
       if (nickname == "xinyang" || nickname == 'zxy'){
@@ -95,6 +114,16 @@
       $('#m').keydown(function(){
         socket.emit('inputing',nickname);
       });
+      $('#check_online').click(function(){
+        socket.emit('check online',nickname);
+        $('#check_online').hide();
+        $('#hide').show();
+      });
+      $('#hide').click(function(){
+        $('#online').html('');
+        $('#hide').hide();
+        $('#check_online').show();
+      });
       socket.on('chat message',function(data){
         $('#status').html('&nbsp;');
         $('#messages').append($('<li class = '+data.color +'>').html('<div class = "msg"><img src ='+ data.img+'></br>'+data.title+'</div>' + '&nbsp;' + '<div class = "msg">'+data.msg+'</div>'));
@@ -109,6 +138,9 @@
       })
       socket.on('user inputing',function(msg){
         $('#status').html(msg);
+      })
+      socket.on('online',function(data){
+        $('#online').html('online users('+data.nums+'): '+data.list);
       })
 
 

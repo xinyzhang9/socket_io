@@ -38,6 +38,10 @@ io.on('connection', function(socket){
   	}else{
   		msg = '----- Someone left the chat -----';
   	}
+
+  	delete nicknames[socket.id];
+  	delete userImgs[socket.id];
+  	delete userColors[socket.id];
   	
   	io.emit('left room',msg)
   });
@@ -72,6 +76,14 @@ io.on('connection', function(socket){
   socket.on('inputing',function(name){
   	var msg = name + ' is inputing ...';
   	socket.broadcast.emit('user inputing',msg);
+  });
+
+  socket.on('check online',function(){
+  	var list = '';
+  	for(key in nicknames){
+  		list += nicknames[key]+' ';
+  	}
+  	socket.emit('online',{list:list,nums:Object.keys(nicknames).length});
   })
 });
 
