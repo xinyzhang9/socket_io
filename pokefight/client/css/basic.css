@@ -13,6 +13,13 @@
       #status{
         color: grey;
       }
+      .dleft{
+        display:inline-block;
+      }
+      .dright{
+        display:inline-block;
+        float:right;
+      }
       #check_online{
         background: maroon;
         color: white;

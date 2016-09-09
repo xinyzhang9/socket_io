@@ -39,7 +39,6 @@ var getUserColor = function(str){
 
 io.on('connection', function(socket){
   socket.on('disconnect',function(){
-    console.log(nicknames);
   	var msg = ''
   	if((nicknames[socket.id])){
   		msg = "----- " + nicknames[socket.id] + ' left the chat -----';
@@ -116,9 +115,10 @@ io.on('connection', function(socket){
           vs[socket.id] = Object.assign({},userPokemons[socket.id]);
           var msg = "--- begin fight! ---";
           socket.emit('notice',msg);
-
+          console.log(socket.id);
+          io.emit('begin',vs);
         }
-        console.log(vs);
+        // console.log(vs);
        
         break;
       default:
@@ -130,7 +130,8 @@ io.on('connection', function(socket){
           color:userColors[socket.id],
           img:userImgs[socket.id]
         });
-      }//switch  	
+        break;
+      }//end switch  	
   });
 
   socket.on('inputing',function(name){
