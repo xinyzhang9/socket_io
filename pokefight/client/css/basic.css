@@ -1,5 +1,5 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 20px Helvetica, Arial; padding: 10px;}
+      body { font: 16px Helvetica, Arial; padding: 10px;}
       form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
       form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
       form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
@@ -76,74 +76,59 @@
         .grass{
     color: green;
     font-weight: bolder;
-    font-size: 20px;
   }
   .fire{
     color: red;
     font-weight: bolder;
-    font-size: 20px;
   }
   .normal{
     color: grey;
     font-weight: bolder;
-    font-size: 20px;
   }
   .water{
     color: skyblue;
     font-weight: bolder;
-    font-size: 20px;
   }
   .bug{
     color: lightgreen;
     font-weight: bolder;
-    font-size: 20px;
   }
   .poison{
     color: purple;
     font-weight: bolder;
-    font-size: 20px;
   }
   .electric{
     color: gold;
     font-weight: bolder;
-    font-size: 20px;
   }
   .ground{
     color: brown;
     font-weight: bolder;
-    font-size: 20px;
   }
   .fighting{
     color: darkred;
     font-weight: bolder;
-    font-size: 20px;
   }
   .psychic{
     color: #33cccc;
     font-weight: bolder;
-    font-size: 20px;
   }
   .rock{
     font-weight: bolder;
-    font-size: 20px;
   }
   .ghost{
     color: #666699;
     font-weight: bolder;
-    font-size: 20px;
   }
   .dragon{
     color: orange;
     font-weight: bolder;
-    font-size: 20px;
   }
   .fairy{
     color: pink;
     font-weight: bolder;
-    font-size: 20px;
   }
   .ice{
     color: lightblue;
     font-weight: bolder;
-    font-size: 20px;
   }
