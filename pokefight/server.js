@@ -68,15 +68,33 @@ io.on('connection', function(socket){
   });
 
   socket.on('chat message', function(msg){
+    //check pokemon
     if(msg.startsWith('#')){
-      var index = msg.slice(1);
+      //random index for pokemon
+      var post = msg.slice(1);
+      var randomIndex = Math.floor(Math.random()*151+1);
+      var index = (0 <= parseInt(post) && parseInt(post) <= 151)? post : randomIndex.toString();
       var data = pokemons[index];
       if(data === null){
         var error = "error: no results found.";
         socket.emit('error',error);
       }else{
-        socket.emit('info',data);
+        var len1 = data.moves.length;
+        var len2 = data.supermoves.length;
+        var rand1 = Math.floor(Math.random()*len1);
+        var rand2 = Math.floor(Math.random()*len2);
+        var res = Object.assign({},
+                                data,
+                                {key:index},
+                                {username:nicknames[socket.id]},
+                                {usercolor:userColors[socket.id]},
+                                {moves:data.moves[rand1]},
+                                {supermoves:data.supermoves[rand2]}
+                                );
+        console.log(res);
+        socket.emit('info',res);
       }
+    //normal talk
     }else{
       var title = nicknames[socket.id];
       var msg = msg;

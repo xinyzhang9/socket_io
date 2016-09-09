@@ -57,11 +57,12 @@ socket.on('online',function(data){
 socket.on('error',function(err){
    $('#status').text(err);
 })
-socket.on('info',function(data){
+socket.on('info',function(res){
   $('#status').html('&nbsp;');
-  $('#messages').append($('<li>').html('name: '+data.name));
-  $('#messages').append($('<li>').html('type: '+data.type));
-  $('#messages').append($('<li>').html('att: '+data.attack.toString()));
-  $('#messages').append($('<li>').html('def: '+data.defense.toString()));
+  var imgSrc = 'img/pokemons/'+res.key+'.png';
+  $('#messages').append($('<li class ='+res.usercolor+'>').html('pokemon for '+res.username));
+  $('#messages').append($('<li>').html('<div class = "msg"><img src = '+imgSrc+'></br><b>'
+                                        +res.name+'</b></br><span class = '+res.type+'>'+res.type+'</span></br>'
+                                        +'ATT: '+res.attack.toString() + ' | ' + 'DEF: '+res.defense.toString() +'</div>'));
   scrollToBottom();
 })
