@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+  <head>
+    <title>pokemon fight</title>
+    <link rel="stylesheet" type="text/css" href="css/basic.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+  </head>
+  <body>
+    <button id = 'check_online'>show who's online</button>
+    <button id = 'hide'>hide who's online</button>
+    <br></br>
+    <div id = 'online'></div>
+    <div id = "status">&nbsp;</div>
+    <hr>
+    <ul id="messages"></ul>
+    <form action="">
+      <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+    <script src="js/client.js"></script>
+  </body>
+</html>

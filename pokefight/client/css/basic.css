@@ -1,0 +1,75 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 18px Helvetica, Arial; padding: 10px;}
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { 
+        list-style-type: none; 
+        margin-bottom: 30px; 
+        padding: 0; 
+      }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+      #status{
+        color: grey;
+      }
+      #check_online{
+        background: maroon;
+        color: white;
+        font-size: 16px;
+        padding: 2px;
+        border-radius: 10px;
+      }
+      #hide{
+        background: steelblue;
+        color: white;
+        font-size: 16px;
+        padding: 2px;
+        border-radius: 10px;
+      }
+      .red{
+        color: red;
+      }
+      .green{
+        color: green;
+      }
+      .orange{
+        color: orange;
+      }
+      .blue{
+        color: blue;
+      }
+      .steelblue{
+        color: steelblue;
+      }
+      .skyblue{
+        color: skyblue;
+      }
+      .purple{
+        color: purple;
+      }
+      .pink{
+        color: pink;
+      }
+      .gray{
+        color: gray;
+      }
+      .maroon{
+        color: maroon;
+      }
+      .olive{
+        color: olive;
+      }
+      .right{
+        text-align: right;
+      }
+      .msg{
+        display: inline-block;
+        vertical-align: middle;
+        text-align: center;
+      }
+      img{
+        width: 100px;
+        height: 100px;
+        display: inline-block;
+      }
