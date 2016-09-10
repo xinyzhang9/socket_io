@@ -60,7 +60,7 @@ socket.on('online',function(data){
 });
 socket.on('notice',function(err){
    $('#status').html('&nbsp;');
-   $('#messages').append($('<li class = "red">').text(err));
+   $('#messages').append($('<li class = "red">').html(err));
    scrollToBottom();
 });
 socket.on('info',function(res){
@@ -71,9 +71,9 @@ socket.on('info',function(res){
   $('#messages').append($('<li>').html('<div class = "msg"><img src = '+imgSrc+'></br><b>'
                                         +res.name+'</b></br><span class = '+res.type+'>'+res.type+'</span></br>'
                                         +'ATT: '+res.attack.toString() + ' | ' + 'DEF: '+res.defense.toString() +'</div>'));
-  $('#messages').append($('<li>').html('<b>Move:</b> '+res.moves.name+ ' | <b>Damage:</b> '+res.moves.damage + ' | <b>Power Gain:</b> '+res.moves.energyInc));
-  $('#messages').append($('<li>').html('<b>Supermove:</b> '+res.supermoves.name+ ' | <b>Damage:</b> '+res.supermoves.damage + ' | <b>Power Cost:</b> '+res.supermoves.energyCost * 100));
-  $('#messages').append($('<li class = "red">').text("input ! to choose this pokemon."));
+  $('#messages').append($('<li>').html('<b>Move:</b> '+res.moves.name+ ' | <b>Damage:</b> '+res.moves.damage + ' | <b>Power Gain:</b> '+res.moves.energyInc + ' | <b>command:</b> '+res.move_command));
+  $('#messages').append($('<li>').html('<b>Supermove:</b> '+res.supermoves.name+ ' | <b>Damage:</b> '+res.supermoves.damage + ' | <b>Power Cost:</b> '+res.supermoves.energyCost * 100 + ' | <b>command:</b> '+res.supermove_command));
+  $('#messages').append($('<li class = "green">').text("input ! to choose this pokemon."));
   $('#messages').append($('<li class = "green">').text("input # to continue switching pokemons."));
   scrollToBottom();
 });
@@ -97,6 +97,7 @@ socket.on('begin',function(res){
   $('#messages').append($('<li>').html('<div class = "msg"><img src = '+selfPokemonImg+'></br><b>'
                                         +self.name+'</b></br><span class = '+self.type+'>'+self.type+'</span></br>'
                                         +'ATT: '+self.attack.toString() + ' | ' + 'DEF: '+self.defense.toString() +'</div>'
+
                                         +'<div class = "msg dright"><img src = '+opponentPokemonImg+'></br><b>'
                                         +opponent.name+'</b></br><span class = '+opponent.type+'>'+opponent.type+'</span></br>'
                                         +'ATT: '+opponent.attack.toString() + ' | ' + 'DEF: '+opponent.defense.toString() +'</div>'

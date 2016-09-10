@@ -80,7 +80,7 @@ io.on('connection', function(socket){
         var randomIndex = Math.floor(Math.random()*151+1);
         var index = (1 <= parseInt(post) && parseInt(post) <= 151)? post : randomIndex.toString();
         var data = pokemons[index];
-        if(data === null){
+        if(data === undefined){
           var error = "error: no results found.";
           socket.emit('notice',error);
         }else{
@@ -88,13 +88,27 @@ io.on('connection', function(socket){
           var len2 = data.supermoves.length;
           var rand1 = Math.floor(Math.random()*len1);
           var rand2 = Math.floor(Math.random()*len2);
+          var move_command = "";
+          var supermove_command = "";
+          //generate move list in rsp
+          var rsp = ['r','s','p'];
+          for(var i = 0; i < 5; i++){
+            var r = Math.floor(Math.random()*3);
+            if(i < 2){ //move
+              move_command += rsp[r];
+            }else{ //supermove
+              supermove_command += rsp[r];
+            }
+          }
           var res = Object.assign({},
                                   data,
                                   {key:index},
                                   {username:nicknames[socket.id]},
                                   {usercolor:userColors[socket.id]},
                                   {moves:data.moves[rand1]},
-                                  {supermoves:data.supermoves[rand2]}
+                                  {supermoves:data.supermoves[rand2]},
+                                  {move_command:move_command},
+                                  {supermove_command:supermove_command}
                                   );
           //set user pokemon
           userPokemons[socket.id] = res;
@@ -102,24 +116,37 @@ io.on('connection', function(socket){
         }
         break;
       case '!': //confirm pokemon
-        var len = Object.keys(vs).length;
-        if(len >= 2){
-          var msg = "error: cannot join combat. queue is full.";
-          socket.emit('notice',msg);
-        }else if (len == 0){
-          vs[socket.id] = Object.assign({},userPokemons[socket.id]);
-          var msg = "--- waiting for the opponent ---";
+        if(!userPokemons[socket.id]){ //undefined
+          var msg = "System Message: You should input '#' first to choose a pokemon!";
           socket.emit('notice',msg);
         }else{
-          //begin fight
-          vs[socket.id] = Object.assign({},userPokemons[socket.id]);
-          var msg = "--- begin fight! ---";
-          socket.emit('notice',msg);
-          console.log(socket.id);
-          io.emit('begin',vs);
+          var len = Object.keys(vs).length;
+          if(len >= 2){
+            var msg = "System Message: Unable to join the battle. Queue is full.";
+            socket.emit('notice',msg);
+          }else if (len == 0){
+            vs[socket.id] = Object.assign({},userPokemons[socket.id]);
+            var msg = "System Message: Waiting for the opponent ...";
+            socket.emit('notice',msg);
+          }else{
+            //begin fight
+            vs[socket.id] = Object.assign({},userPokemons[socket.id]);
+            var msg = "System Message: Battle Begins!";
+            socket.emit('notice',msg);
+            console.log(socket.id);
+            io.emit('begin',vs);
+          }
         }
-        // console.log(vs);
-       
+               
+        break;
+      case '@':
+        //handle rsp
+
+        break;
+      case '?':
+        //answer questions about rsp
+        var msg = "<b>Helper:</b> <p>r-rock, s-scissors, p-paper.</p><p>You should input a length-6 sequence after '@'.</p><p>For example, @rsrrpp </p><p>If your move command is 'rs' and your supermove command is 'rsp', you can input '@12s' which equals '@rsrsps'.</p><p>You can also input '@1ss1' which equals '@rsssrs'.</p>";
+        socket.emit('notice',msg);
         break;
       default:
         var title = nicknames[socket.id];
