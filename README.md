@@ -3,6 +3,7 @@ This repo contains my projects using socket.io with node.js.
 Check the official website http://socket.io/ for more info.  
 
 ## chat room
+This is a interative chatroom for multiple users. Based on the basic functions implemented in the tutorial, I also added some advanced features.
 ### how to use
 clone or download the repo "chat"
 ```
@@ -23,7 +24,17 @@ open your browser at localhost:3000
 - [x] Don’t send the same message to the user that sent it himself. Instead, append the message directly as soon as he presses enter.
 - [x] Add “{user} is typing” functionality
 - [x] Show who’s online
-- [ ] Add private messaging
+- [x] Add private messaging
 
 ### screenshots
 ![alt tag](https://raw.githubusercontent.com/xinyzhang9/socket_io/master/chat/screen1.png)
+
+## poke fight
+This is the advanced pratice of socket.io. I plan to make a pvp and pve interative games featuring pokemons.
+### To do list
+- [ ] add hitpoints to each pokemon
+- [ ] hitpoint/energy display
+- [ ] add types to each moves and supermoves
+- [ ] design game engine of rock-scissor-paper
+- [ ] design UI of battle field
+- [ ] animations and effects
