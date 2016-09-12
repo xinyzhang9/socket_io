@@ -42,4 +42,7 @@ This is the advanced pratice of socket.io. I plan to make a pvp and pve interati
 - [ ] add types to each moves and supermoves
 - [ ] design game engine of rock-scissor-paper
 - [ ] design UI of battle field
-- [ ] animations and effects
+- [ ] animations and effects  
+
+### screenshots
+![alt tag](https://raw.githubusercontent.com/xinyzhang9/socket_io/master/pokefight/poke_fight.png)
