@@ -27,7 +27,7 @@ open your browser at localhost:3000
 - [ ] Add private messaging
 
 ### screenshots
-![alt tag](https://raw.githubusercontent.com/xinyzhang9/socket_io/master/chat/cy.png=300x)
+![alt tag](https://raw.githubusercontent.com/xinyzhang9/socket_io/master/chat/cy.png =300x)
 
 ## poke fight
 This is the advanced pratice of socket.io. I plan to make a pvp and pve interative games featuring pokemons.
