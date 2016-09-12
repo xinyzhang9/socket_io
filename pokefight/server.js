@@ -30,6 +30,20 @@ var djb2Code = function(str){
 	return hash;
 }
 
+var isCommandValid = function(str){
+  if (str.length !== 6){
+    return false;
+  }
+  var s = str.toLowerCase();
+  console.log(s);
+  for(var i = 0; i < s.length; i++){
+    if(s[i] !== 'r' && s[i] !== 's' && s[i] !== 'p'){
+      return false;
+    }
+  }
+  return true;
+}
+
 var colors = ['black','orange','blue','steelblue','skyblue','purple','pink','gray','maroon','olive'];
 var getUserColor = function(str){
 	var len = colors.length;
@@ -135,12 +149,42 @@ io.on('connection', function(socket){
             socket.emit('notice',msg);
             console.log(socket.id);
             io.emit('begin',vs);
+            var msg = "Please enter your battle commands ...";
+            io.emit('notice',msg);
           }
         }
                
         break;
       case '@':
-        //handle rsp
+        if(!userPokemons[socket.id]){ //undefined
+          var msg = "System Message: You should input '#' first to choose a pokemon!";
+          socket.emit('notice',msg);
+        }else{
+          //handle rsp
+          var commands = msg.slice(1);
+          //translate commands into pprrss
+          var str = "";
+          for(var i = 0; i < commands.length; i++){
+            switch(commands[i]){
+              case '1':
+                str += userPokemons[socket.id].move_command;
+                break;
+              case '2':
+                str += userPokemons[socket.id].supermove_command;
+                break;
+              default:
+                str += commands[i];
+                break;
+            }//end switch
+          }
+          if(!isCommandValid(str)){
+            var msg = "Invalid command! Enter '?' for more details.";
+            socket.emit('notice',msg);
+          }else{
+            var msg = "Your command is "+str;
+            socket.emit('notice',msg);
+          }
+        }
 
         break;
       case '?':

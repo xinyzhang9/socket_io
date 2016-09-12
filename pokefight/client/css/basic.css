@@ -139,3 +139,18 @@
     color: lightblue;
     font-weight: bolder;
   }
+  .hp{
+    background-color:steelblue;
+    color:white;
+    padding:2px;
+  }
+  .att{
+    background-color:maroon;
+    color:white;
+    padding:2px;
+  }
+  .def{
+    background-color:gray;
+    color:white;
+    padding:2px;
+  }

@@ -70,7 +70,7 @@ socket.on('info',function(res){
   $('#messages').append($('<li class ='+res.usercolor+'>').html('pokemon for '+res.username));
   $('#messages').append($('<li>').html('<div class = "msg"><img src = '+imgSrc+'></br><b>'
                                         +res.name+'</b></br><span class = '+res.type+'>'+res.type+'</span></br>'
-                                        +'ATT: '+res.attack.toString() + ' | ' + 'DEF: '+res.defense.toString() +'</div>'));
+                                        +'<span class = "hp">HP</span> '+res.hitpoints.toString()+' <span class = "att">ATT</span> '+res.attack.toString() + ' <span class = "def">DEF</span> '+res.defense.toString() +'</div>'));
   $('#messages').append($('<li>').html('<b>Move:</b> '+res.moves.name+ ' | <b>Damage:</b> '+res.moves.damage + ' | <b>Power Gain:</b> '+res.moves.energyInc + ' | <b>Command:</b> '+res.move_command));
   $('#messages').append($('<li>').html('<b>Supermove:</b> '+res.supermoves.name+ ' | <b>Damage:</b> '+res.supermoves.damage + ' | <b>Power Cost:</b> '+res.supermoves.energyCost * 100 + ' | <b>Command:</b> '+res.supermove_command));
   $('#messages').append($('<li class = "green">').text("input ! to choose this pokemon."));
@@ -93,14 +93,14 @@ socket.on('begin',function(res){
       opponentPokemonImg = 'img/pokemons/'+res[key].key + '.png';
     }
   }
-  $('#messages').append($('<li>').html('<div class = "dleft skyblue">my info</div>'+'<div class = "dright red"> opponent info</div>'));
+  $('#messages').append($('<li>').html('<div class = "dleft skyblue">my info</div>'+'<div class = "dright maroon"> opponent info</div>'));
   $('#messages').append($('<li>').html('<div class = "msg"><img src = '+selfPokemonImg+'></br><b>'
                                         +self.name+'</b></br><span class = '+self.type+'>'+self.type+'</span></br>'
-                                        +'ATT: '+self.attack.toString() + ' | ' + 'DEF: '+self.defense.toString() +'</div>'
+                                        +'<span class = "hp">HP</span> '+self.hitpoints.toString()+' <span class = "att">ATT</span> '+self.attack.toString() + ' <span class = "def">DEF</span> '+self.defense.toString() +'</div>'
 
                                         +'<div class = "msg dright"><img src = '+opponentPokemonImg+'></br><b>'
                                         +opponent.name+'</b></br><span class = '+opponent.type+'>'+opponent.type+'</span></br>'
-                                        +'ATT: '+opponent.attack.toString() + ' | ' + 'DEF: '+opponent.defense.toString() +'</div>'
+                                        +'<span class = "hp">HP</span> '+opponent.hitpoints.toString()+' <span class = "att">ATT</span> '+opponent.attack.toString() + ' <span class = "def">DEF</span> '+opponent.defense.toString() +'</div>'
                                         ));
   
   scrollToBottom();
