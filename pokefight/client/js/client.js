@@ -71,8 +71,8 @@ socket.on('info',function(res){
   $('#messages').append($('<li>').html('<div class = "msg"><img src = '+imgSrc+'></br><b>'
                                         +res.name+'</b></br><span class = '+res.type+'>'+res.type+'</span></br>'
                                         +'ATT: '+res.attack.toString() + ' | ' + 'DEF: '+res.defense.toString() +'</div>'));
-  $('#messages').append($('<li>').html('<b>Move:</b> '+res.moves.name+ ' | <b>Damage:</b> '+res.moves.damage + ' | <b>Power Gain:</b> '+res.moves.energyInc + ' | <b>command:</b> '+res.move_command));
-  $('#messages').append($('<li>').html('<b>Supermove:</b> '+res.supermoves.name+ ' | <b>Damage:</b> '+res.supermoves.damage + ' | <b>Power Cost:</b> '+res.supermoves.energyCost * 100 + ' | <b>command:</b> '+res.supermove_command));
+  $('#messages').append($('<li>').html('<b>Move:</b> '+res.moves.name+ ' | <b>Damage:</b> '+res.moves.damage + ' | <b>Power Gain:</b> '+res.moves.energyInc + ' | <b>Command:</b> '+res.move_command));
+  $('#messages').append($('<li>').html('<b>Supermove:</b> '+res.supermoves.name+ ' | <b>Damage:</b> '+res.supermoves.damage + ' | <b>Power Cost:</b> '+res.supermoves.energyCost * 100 + ' | <b>Command:</b> '+res.supermove_command));
   $('#messages').append($('<li class = "green">').text("input ! to choose this pokemon."));
   $('#messages').append($('<li class = "green">').text("input # to continue switching pokemons."));
   scrollToBottom();
