@@ -1,5 +1,6 @@
 {
     "1": {
+        "hitpoints":90,
         "attack": 49,
         "curve": 1.3,
         "defense": 49,
@@ -47,6 +48,7 @@
         "type": "grass"
     },
     "2": {
+        "hitpoints":120,
         "attack": 62,
         "curve": 1.3,
         "defense": 63,
@@ -89,6 +91,7 @@
         "type": "grass"
     },
     "3": {
+        "hitpoints":160,
         "attack": 82,
         "curve": 1.3,
         "defense": 83,
@@ -129,6 +132,7 @@
         "type": "grass"
     },
     "4": {
+        "hitpoints": 78,
         "attack": 52,
         "curve": 1.3,
         "defense": 43,
@@ -176,6 +180,7 @@
         "type": "fire"
     },
     "5": {
+        "hitpoints": 116,
         "attack": 64,
         "curve": 1.3,
         "defense": 58,
@@ -218,6 +223,7 @@
         "type": "fire"
     },
     "6": {
+        "hitpoints": 156,
         "attack": 84,
         "curve": 1.3,
         "defense": 78,
@@ -258,6 +264,7 @@
         "type": "fire"
     },
     "7": {
+        "hitpoints": 88,
         "attack": 48,
         "curve": 1.3,
         "defense": 65,
@@ -305,6 +312,7 @@
         "type": "water"
     },
     "8": {
+        "hitpoints": 118,
         "attack": 63,
         "curve": 1.3,
         "defense": 80,
@@ -347,6 +355,7 @@
         "type": "water"
     },
     "9": {
+        "hitpoints": 158,
         "attack": 83,
         "curve": 1.3,
         "defense": 100,
@@ -387,6 +396,7 @@
         "type": "water"
     },
     "10": {
+        "hitpoints": 90,
         "attack": 30,
         "curve": 1.6,
         "defense": 35,
@@ -422,6 +432,7 @@
         "type": "bug"
     },
     "11": {
+        "hitpoints": 100,
         "name": "Metapod",
         "attack": 20,
         "defense": 55,
@@ -450,6 +461,7 @@
         "evolveTo": "12"
     },
     "12": {
+        "hitpoints": 120,
         "attack": 45,
         "curve": 1.6,
         "defense": 50,
@@ -490,6 +502,7 @@
         "type": "bug"
     },
     "13": {
+        "hitpoints": 80,
         "attack": 35,
         "curve": 1.6,
         "defense": 30,
@@ -525,6 +538,7 @@
         "type": "bug"
     },
     "14": {
+        "hitpoints": 90,
         "name": "Kakuna",
         "attack": 25,
         "defense": 50,
@@ -553,6 +567,7 @@
         "evolveTo": "15"
     },
     "15": {
+        "hitpoints": 130,
         "name": "Beedrill",
         "attack": 40,
         "defense": 45,
@@ -592,6 +607,7 @@
         "type": "bug"
     },
     "16": {
+        "hitpoints": 80,
         "attack": 45,
         "curve": 1.3,
         "defense": 40,
@@ -639,6 +655,7 @@
         "type": "normal"
     },
     "17": {
+        "hitpoints": 126,
         "attack": 60,
         "curve": 1.3,
         "defense": 55,
@@ -681,6 +698,7 @@
         "type": "normal"
     },
     "18": {
+        "hitpoints": 166,
         "attack": 80,
         "curve": 1.3,
         "defense": 75,
@@ -721,6 +739,7 @@
         "type": "normal"
     },
     "19": {
+        "hitpoints": 60,
         "attack": 56,
         "curve": 1.6,
         "defense": 35,
@@ -768,6 +787,7 @@
         "type": "normal"
     },
     "20": {
+        "hitpoints": 110,
         "attack": 81,
         "curve": 1.6,
         "defense": 60,
@@ -808,6 +828,7 @@
         "type": "normal"
     },
     "21": {
+        "hitpoints": 80,
         "attack": 60,
         "curve": 1.6,
         "defense": 30,
@@ -855,6 +876,7 @@
         "type": "normal"
     },
     "22": {
+        "hitpoints": 130,
         "attack": 90,
         "curve": 1.6,
         "defense": 65,
@@ -895,6 +917,7 @@
         "type": "normal"
     },
     "23": {
+        "hitpoints": 70,
         "attack": 60,
         "curve": 1.6,
         "defense": 44,
@@ -942,6 +965,7 @@
         "type": "poison"
     },
     "24": {
+        "hitpoints": 120,
         "attack": 85,
         "curve": 1.6,
         "defense": 69,
@@ -982,6 +1006,7 @@
         "type": "poison"
     },
     "25": {
+        "hitpoints": 70,
         "name": "Pikachu",
         "attack": 50,
         "defense": 40,
@@ -1022,6 +1047,7 @@
         "evolveTo": "26"
     },
     "26": {
+        "hitpoints": 120,
         "attack": 90,
         "curve": 1.6,
         "defense": 55,
@@ -1062,6 +1088,7 @@
         "type": "electric"
     },
     "27": {
+        "hitpoints": 100,
         "attack": 75,
         "curve": 1.6,
         "defense": 85,
@@ -1109,6 +1136,7 @@
         "type": "ground"
     },
     "28": {
+        "hitpoints": 150,
         "attack": 100,
         "curve": 1.6,
         "defense": 110,
@@ -1149,6 +1177,7 @@
         "type": "ground"
     },
     "29": {
+        "hitpoints": 110,
         "attack": 47,
         "curve": 1.3,
         "defense": 52,
@@ -1196,6 +1225,7 @@
         "type": "poison"
     },
     "30": {
+        "hitpoints": 140,
         "name": "Nidorina",
         "attack": 62,
         "defense": 67,
@@ -1236,6 +1266,7 @@
         "evolveTo": "31"
     },
     "31": {
+        "hitpoints": 180,
         "attack": 82,
         "curve": 1.3,
         "defense": 87,
@@ -1276,6 +1307,7 @@
         "type": "poison"
     },
     "32": {
+        "hitpoints": 92,
         "attack": 57,
         "curve": 1.3,
         "defense": 40,
@@ -1323,6 +1355,7 @@
         "type": "poison"
     },
     "33": {
+        "hitpoints": 122,
         "name": "Nidorino",
         "attack": 72,
         "defense": 57,
@@ -1363,6 +1396,7 @@
         "evolveTo": "34"
     },
     "34": {
+        "hitpoints": 162,
         "attack": 92,
         "curve": 1.3,
         "defense": 77,
@@ -1403,6 +1437,7 @@
         "type": "poison"
     },
     "35": {
+        "hitpoints": 140,
         "name": "Clefairy",
         "attack": 45,
         "defense": 48,
@@ -1443,6 +1478,7 @@
         "evolveTo": "36"
     },
     "36": {
+        "hitpoints": 190,
         "name": "Clefable",
         "attack": 70,
         "defense": 73,
@@ -1482,6 +1518,7 @@
         "type": "fairy"
     },
     "37": {
+        "hitpoints": 76,
         "name": "Vulpix",
         "attack": 38,
         "defense": 41,
@@ -1522,6 +1559,7 @@
         "evolveTo": "38"
     },
     "38": {
+        "hitpoints": 146,
         "attack": 76,
         "curve": 1.6,
         "defense": 75,
@@ -1562,6 +1600,7 @@
         "type": "fire"
     },
     "39": {
+        "hitpoints": 230,
         "name": "Jigglypuff",
         "attack": 45,
         "defense": 20,
@@ -1602,6 +1641,7 @@
         "evolveTo": "40"
     },
     "40": {
+        "hitpoints": 280,
         "name": "Wigglytuff",
         "attack": 70,
         "defense": 45,
@@ -1641,6 +1681,7 @@
         "type": "fairy"
     },
     "41": {
+        "hitpoints": 80,
         "attack": 45,
         "curve": 1.6,
         "defense": 35,
@@ -1688,6 +1729,7 @@
         "type": "poison"
     },
     "42": {
+        "hitpoints": 150,
         "attack": 80,
         "curve": 1.6,
         "defense": 70,
@@ -1728,6 +1770,7 @@
         "type": "poison"
     },
     "43": {
+        "hitpoints": 90,
         "name": "Oddish",
         "attack": 50,
         "defense": 55,
@@ -1768,6 +1811,7 @@
         "evolveTo": "44"
     },
     "44": {
+        "hitpoints": 120,
         "name": "Gloom",
         "attack": 65,
         "defense": 70,
@@ -1808,6 +1852,7 @@
         "evolveTo": "45"
     },
     "45": {
+        "hitpoints": 150,
         "name": "Vileplume",
         "attack": 80,
         "defense": 85,
@@ -1847,6 +1892,7 @@
         "type": "grass"
     },
     "46": {
+        "hitpoints": 70,
         "attack": 70,
         "curve": 1.6,
         "defense": 55,
@@ -1894,6 +1940,7 @@
         "type": "bug"
     },
     "47": {
+        "hitpoints": 120,
         "attack": 95,
         "curve": 1.6,
         "defense": 80,
@@ -1934,6 +1981,7 @@
         "type": "bug"
     },
     "48": {
+        "hitpoints": 120,
         "attack": 55,
         "curve": 1.6,
         "defense": 50,
@@ -1981,6 +2029,7 @@
         "type": "bug"
     },
     "49": {
+        "hitpoints": 140,
         "attack": 65,
         "curve": 1.6,
         "defense": 60,
@@ -2021,6 +2070,7 @@
         "type": "bug"
     },
     "50": {
+        "hitpoints": 20,
         "attack": 55,
         "curve": 1.6,
         "defense": 25,
@@ -2068,6 +2118,7 @@
         "type": "ground"
     },
     "51": {
+        "hitpoints": 70,
         "attack": 80,
         "curve": 1.6,
         "defense": 50,
@@ -2108,6 +2159,7 @@
         "type": "ground"
     },
     "52": {
+        "hitpoints": 80,
         "attack": 45,
         "curve": 1.6,
         "defense": 35,
@@ -2155,6 +2207,7 @@
         "type": "normal"
     },
     "53": {
+        "hitpoints": 130,
         "attack": 70,
         "curve": 1.6,
         "defense": 60,
@@ -2195,6 +2248,7 @@
         "type": "normal"
     },
     "54": {
+        "hitpoints": 100,
         "attack": 52,
         "curve": 1.6,
         "defense": 48,
@@ -2242,6 +2296,7 @@
         "type": "water"
     },
     "55": {
+        "hitpoints": 160,
         "attack": 82,
         "curve": 1.6,
         "defense": 78,
@@ -2282,6 +2337,7 @@
         "type": "water"
     },
     "56": {
+        "hitpoints": 80,
         "attack": 80,
         "curve": 1.6,
         "defense": 35,
@@ -2329,6 +2385,7 @@
         "type": "fighting"
     },
     "57": {
+        "hitpoints": 130,
         "attack": 105,
         "curve": 1.6,
         "defense": 60,
@@ -2369,6 +2426,7 @@
         "type": "fighting"
     },
     "58": {
+        "hitpoints": 110,
         "name": "Growlithe",
         "attack": 70,
         "defense": 45,
@@ -2409,6 +2467,7 @@
         "evolveTo": "59"
     },
     "59": {
+        "hitpoints": 180,
         "attack": 110,
         "curve": 1,
         "defense": 80,
@@ -2449,6 +2508,7 @@
         "type": "fire"
     },
     "60": {
+        "hitpoints": 80,
         "attack": 50,
         "curve": 1.3,
         "defense": 40,
@@ -2496,6 +2556,7 @@
         "type": "water"
     },
     "61": {
+        "hitpoints": 130,
         "name": "Poliwhirl",
         "attack": 65,
         "defense": 65,
@@ -2536,6 +2597,7 @@
         "evolveTo": "62"
     },
     "62": {
+        "hitpoints": 180,
         "name": "Poliwrath",
         "attack": 95,
         "defense": 95,
@@ -2575,6 +2637,7 @@
         "type": "water"
     },
     "63": {
+        "hitpoints": 50,
         "name": "Abra",
         "attack": 20,
         "defense": 15,
@@ -2610,6 +2673,7 @@
         "evolveTo": "64"
     },
     "64": {
+        "hitpoints": 80,
         "name": "Kadabra",
         "attack": 35,
         "defense": 30,
@@ -2650,6 +2714,7 @@
         "evolveTo": "65"
     },
     "65": {
+        "hitpoints": 110,
         "attack": 50,
         "curve": 1.3,
         "defense": 45,
@@ -2690,6 +2755,7 @@
         "type": "psychic"
     },
     "66": {
+        "hitpoints": 140,
         "attack": 80,
         "curve": 1.3,
         "defense": 50,
@@ -2737,6 +2803,7 @@
         "type": "fighting"
     },
     "67": {
+        "hitpoints": 160,
         "name": "Machoke",
         "attack": 100,
         "defense": 70,
@@ -2777,6 +2844,7 @@
         "evolveTo": "68"
     },
     "68": {
+        "hitpoints": 180,
         "attack": 130,
         "curve": 1.3,
         "defense": 80,
@@ -2817,6 +2885,7 @@
         "type": "fighting"
     },
     "69": {
+        "hitpoints": 100,
         "attack": 75,
         "curve": 1.3,
         "defense": 35,
@@ -2864,6 +2933,7 @@
         "type": "grass"
     },
     "70": {
+        "hitpoints": 130,
         "name": "Weepinbell",
         "attack": 90,
         "defense": 50,
@@ -2904,6 +2974,7 @@
         "evolveTo": "71"
     },
     "71": {
+        "hitpoints": 160,
         "attack": 105,
         "curve": 1.3,
         "defense": 65,
@@ -2944,6 +3015,7 @@
         "type": "grass"
     },
     "72": {
+        "hitpoints": 80,
         "attack": 40,
         "curve": 1,
         "defense": 35,
@@ -2991,6 +3063,7 @@
         "type": "water"
     },
     "73": {
+        "hitpoints": 160,
         "attack": 70,
         "curve": 1,
         "defense": 65,
@@ -3031,6 +3104,7 @@
         "type": "water"
     },
     "74": {
+        "hitpoints": 80,
         "attack": 80,
         "curve": 1.3,
         "defense": 100,
@@ -3078,6 +3152,7 @@
         "type": "rock"
     },
     "75": {
+        "hitpoints": 110,
         "name": "Graveler",
         "attack": 95,
         "defense": 115,
@@ -3118,6 +3193,7 @@
         "evolveTo": "76"
     },
     "76": {
+        "hitpoints": 160,
         "attack": 110,
         "curve": 1.3,
         "defense": 130,
@@ -3158,6 +3234,7 @@
         "type": "rock"
     },
     "77": {
+        "hitpoints": 100,
         "attack": 85,
         "curve": 1.6,
         "defense": 55,
@@ -3205,6 +3282,7 @@
         "type": "fire"
     },
     "78": {
+        "hitpoints": 130,
         "attack": 100,
         "curve": 1.6,
         "defense": 70,
@@ -3245,6 +3323,7 @@
         "type": "fire"
     },
     "79": {
+        "hitpoints": 180,
         "attack": 65,
         "curve": 1.6,
         "defense": 65,
@@ -3292,6 +3371,7 @@
         "type": "water"
     },
     "80": {
+        "hitpoints": 190,
         "attack": 75,
         "curve": 1.6,
         "defense": 110,
@@ -3332,7 +3412,7 @@
         "type": "water"
     },
     "81": {
-        "attack": 35,
+        "attack": 50,
         "curve": 1.6,
         "defense": 70,
         "evolveLevel": 30,
@@ -3379,6 +3459,7 @@
         "type": "electric"
     },
     "82": {
+        "hitpoints": 100,
         "attack": 60,
         "curve": 1.6,
         "defense": 95,
@@ -3419,6 +3500,7 @@
         "type": "electric"
     },
     "83": {
+        "hitpoints": 104,
         "attack": 65,
         "curve": 1.6,
         "defense": 55,
@@ -3464,6 +3546,7 @@
         "type": "normal"
     },
     "84": {
+        "hitpoints": 70,
         "attack": 85,
         "curve": 1.6,
         "defense": 45,
@@ -3511,6 +3594,7 @@
         "type": "normal"
     },
     "85": {
+        "hitpoints": 120,
         "attack": 110,
         "curve": 1.6,
         "defense": 70,
@@ -3551,6 +3635,7 @@
         "type": "normal"
     },
     "86": {
+        "hitpoints": 130,
         "attack": 45,
         "curve": 1.6,
         "defense": 55,
@@ -3598,6 +3683,7 @@
         "type": "water"
     },
     "87": {
+        "hitpoints": 180,
         "attack": 70,
         "curve": 1.6,
         "defense": 80,
@@ -3638,6 +3724,7 @@
         "type": "water"
     },
     "88": {
+        "hitpoints": 160,
         "attack": 80,
         "curve": 1.6,
         "defense": 50,
@@ -3685,6 +3772,7 @@
         "type": "poison"
     },
     "89": {
+        "hitpoints": 210,
         "attack": 105,
         "curve": 1.6,
         "defense": 75,
@@ -3725,6 +3813,7 @@
         "type": "poison"
     },
     "90": {
+        "hitpoints": 60,
         "name": "Shellder",
         "attack": 65,
         "defense": 100,
@@ -3765,6 +3854,7 @@
         "evolveTo": "91"
     },
     "91": {
+        "hitpoints": 100,
         "attack": 95,
         "curve": 1,
         "defense": 180,
@@ -3805,6 +3895,7 @@
         "type": "water"
     },
     "92": {
+        "hitpoints": 60,
         "attack": 35,
         "curve": 1.3,
         "defense": 30,
@@ -3852,6 +3943,7 @@
         "type": "ghost"
     },
     "93": {
+        "hitpoints": 90,
         "name": "Haunter",
         "attack": 50,
         "defense": 45,
@@ -3892,6 +3984,7 @@
         "evolveTo": "94"
     },
     "94": {
+        "hitpoints": 120,
         "attack": 65,
         "curve": 1.3,
         "defense": 60,
@@ -3932,6 +4025,7 @@
         "type": "ghost"
     },
     "95": {
+        "hitpoints": 70,
         "attack": 45,
         "curve": 1.6,
         "defense": 160,
@@ -3977,6 +4071,7 @@
         "type": "rock"
     },
     "96": {
+        "hitpoints": 120,
         "attack": 48,
         "curve": 1.6,
         "defense": 45,
@@ -4024,6 +4119,7 @@
         "type": "psychic"
     },
     "97": {
+        "hitpoints": 170,
         "attack": 73,
         "curve": 1.6,
         "defense": 70,
@@ -4064,6 +4160,7 @@
         "type": "psychic"
     },
     "98": {
+        "hitpoints": 60,
         "attack": 105,
         "curve": 1.6,
         "defense": 90,
@@ -4111,6 +4208,7 @@
         "type": "water"
     },
     "99": {
+        "hitpoints": 110,
         "attack": 130,
         "curve": 1.6,
         "defense": 115,
@@ -4151,6 +4249,7 @@
         "type": "water"
     },
     "100": {
+        "hitpoints": 80,
         "attack": 30,
         "curve": 1.6,
         "defense": 50,
@@ -4198,6 +4297,7 @@
         "type": "electric"
     },
     "101": {
+        "hitpoints": 120,
         "attack": 50,
         "curve": 1.6,
         "defense": 70,
@@ -4238,6 +4338,7 @@
         "type": "electric"
     },
     "102": {
+        "hitpoints": 120,
         "name": "Exeggcute",
         "attack": 40,
         "defense": 80,
@@ -4273,6 +4374,7 @@
         "evolveTo": "103"
     },
     "103": {
+        "hitpoints": 190,
         "attack": 95,
         "curve": 1,
         "defense": 85,
@@ -4313,6 +4415,7 @@
         "type": "grass"
     },
     "104": {
+        "hitpoints": 100,
         "attack": 50,
         "curve": 1.6,
         "defense": 95,
@@ -4360,6 +4463,7 @@
         "type": "ground"
     },
     "105": {
+        "hitpoints": 120,
         "attack": 80,
         "curve": 1.6,
         "defense": 110,
@@ -4400,6 +4504,7 @@
         "type": "ground"
     },
     "106": {
+        "hitpoints": 100,
         "attack": 120,
         "curve": 1.6,
         "defense": 53,
@@ -4447,6 +4552,7 @@
         "type": "fighting"
     },
     "107": {
+        "hitpoints": 100,
         "attack": 105,
         "curve": 1.6,
         "defense": 79,
@@ -4493,6 +4599,7 @@
         "type": "fighting"
     },
     "108": {
+        "hitpoints": 180,
         "attack": 55,
         "curve": 1.6,
         "defense": 75,
@@ -4538,6 +4645,7 @@
         "type": "normal"
     },
     "109": {
+        "hitpoints": 80,
         "attack": 65,
         "curve": 1.6,
         "defense": 95,
@@ -4580,6 +4688,7 @@
         "type": "poison"
     },
     "110": {
+        "hitpoints": 130,
         "attack": 90,
         "curve": 1.6,
         "defense": 120,
@@ -4615,6 +4724,7 @@
         "type": "poison"
     },
     "111": {
+        "hitpoints": 160,
         "attack": 85,
         "curve": 1,
         "defense": 95,
@@ -4662,6 +4772,7 @@
         "type": "ground"
     },
     "112": {
+        "hitpoints": 210,
         "attack": 130,
         "curve": 1,
         "defense": 120,
@@ -4702,6 +4813,7 @@
         "type": "ground"
     },
     "113": {
+        "hitpoints": 500,
         "attack": 5,
         "curve": 1.9,
         "defense": 5,
@@ -4747,6 +4859,7 @@
         "type": "normal"
     },
     "114": {
+        "hitpoints": 130,
         "attack": 55,
         "curve": 1.6,
         "defense": 115,
@@ -4787,6 +4900,7 @@
         "type": "grass"
     },
     "115": {
+        "hitpoints": 210,
         "attack": 95,
         "curve": 1.6,
         "defense": 80,
@@ -4832,6 +4946,7 @@
         "type": "normal"
     },
     "116": {
+        "hitpoints": 60,
         "attack": 40,
         "curve": 1.6,
         "defense": 70,
@@ -4879,6 +4994,7 @@
         "type": "water"
     },
     "117": {
+        "hitpoints": 110,
         "attack": 65,
         "curve": 1.6,
         "defense": 95,
@@ -4919,6 +5035,7 @@
         "type": "water"
     },
     "118": {
+        "hitpoints": 90,
         "attack": 67,
         "curve": 1.6,
         "defense": 60,
@@ -4966,6 +5083,7 @@
         "type": "water"
     },
     "119": {
+        "hitpoints": 160,
         "attack": 92,
         "curve": 1.6,
         "defense": 65,
@@ -5006,6 +5124,7 @@
         "type": "water"
     },
     "120": {
+        "hitpoints": 60,
         "name": "Staryu",
         "attack": 45,
         "defense": 55,
@@ -5046,6 +5165,7 @@
         "evolveTo": "121"
     },
     "121": {
+        "hitpoints": 120,
         "attack": 75,
         "curve": 1,
         "defense": 85,
@@ -5086,6 +5206,7 @@
         "type": "water"
     },
     "122": {
+        "hitpoints": 80,
         "attack": 45,
         "curve": 1.6,
         "defense": 65,
@@ -5131,6 +5252,7 @@
         "type": "psychic"
     },
     "123": {
+        "hitpoints": 140,
         "attack": 110,
         "curve": 1.6,
         "defense": 80,
@@ -5176,6 +5298,7 @@
         "type": "bug"
     },
     "124": {
+        "hitpoints": 130,
         "attack": 50,
         "curve": 1.6,
         "defense": 35,
@@ -5221,6 +5344,7 @@
         "type": "ice"
     },
     "125": {
+        "hitpoints": 130,
         "attack": 83,
         "curve": 1.6,
         "defense": 57,
@@ -5266,6 +5390,7 @@
         "type": "electric"
     },
     "126": {
+        "hitpoints": 130,
         "attack": 95,
         "curve": 1.6,
         "defense": 57,
@@ -5311,6 +5436,7 @@
         "type": "fire"
     },
     "127": {
+        "hitpoints": 130,
         "attack": 125,
         "curve": 1,
         "defense": 100,
@@ -5356,6 +5482,7 @@
         "type": "bug"
     },
     "128": {
+        "hitpoints": 150,
         "attack": 100,
         "curve": 1,
         "defense": 95,
@@ -5401,6 +5528,7 @@
         "type": "normal"
     },
     "129": {
+        "hitpoints": 40,
         "attack": 10,
         "curve": 1,
         "defense": 55,
@@ -5431,6 +5559,7 @@
         "type": "water"
     },
     "130": {
+        "hitpoints": 190,
         "attack": 125,
         "curve": 1,
         "defense": 79,
@@ -5466,6 +5595,7 @@
         "type": "water"
     },
     "131": {
+        "hitpoints": 260,
         "attack": 85,
         "curve": 1,
         "defense": 80,
@@ -5511,6 +5641,7 @@
         "type": "water"
     },
     "132": {
+        "hitpoints": 96,
         "name": "Ditto",
         "attack": 48,
         "defense": 48,
@@ -5533,6 +5664,7 @@
         "type": "normal"
     },
     "133": {
+        "hitpoints": 110,
         "attack": 55,
         "curve": 1.6,
         "defense": 50,
@@ -5578,6 +5710,7 @@
         "type": "normal"
     },
     "134": {
+        "hitpoints": 260,
         "name": "Vaporeon",
         "attack": 65,
         "defense": 60,
@@ -5612,6 +5745,7 @@
         "type": "water"
     },
     "135": {
+        "hitpoints": 130,
         "attack": 65,
         "curve": 1.6,
         "defense": 60,
@@ -5652,6 +5786,7 @@
         "type": "electric"
     },
     "136": {
+        "hitpoints": 130,
         "attack": 130,
         "curve": 1.6,
         "defense": 60,
@@ -5687,6 +5822,7 @@
         "type": "fire"
     },
     "137": {
+        "hitpoints": 130,
         "attack": 60,
         "curve": 1.6,
         "defense": 70,
@@ -5732,6 +5868,7 @@
         "type": "normal"
     },
     "138": {
+        "hitpoints": 70,
         "attack": 40,
         "curve": 1.6,
         "defense": 100,
@@ -5774,6 +5911,7 @@
         "type": "rock"
     },
     "139": {
+        "hitpoints": 140,
         "attack": 60,
         "curve": 1.6,
         "defense": 125,
@@ -5814,6 +5952,7 @@
         "type": "rock"
     },
     "140": {
+        "hitpoints": 60,
         "attack": 80,
         "curve": 1.6,
         "defense": 90,
@@ -5856,6 +5995,7 @@
         "type": "rock"
     },
     "141": {
+        "hitpoints": 120,
         "attack": 115,
         "curve": 1.6,
         "defense": 105,
@@ -5896,6 +6036,7 @@
         "type": "rock"
     },
     "142": {
+        "hitpoints": 160,
         "attack": 105,
         "curve": 1,
         "defense": 65,
@@ -5936,6 +6077,7 @@
         "type": "rock"
     },
     "143": {
+        "hitpoints": 320,
         "attack": 110,
         "curve": 1,
         "defense": 65,
@@ -5981,6 +6123,7 @@
         "type": "normal"
     },
     "144": {
+        "hitpoints": 180,
         "attack": 85,
         "curve": 1,
         "defense": 100,
@@ -6021,6 +6164,7 @@
         "type": "ice"
     },
     "145": {
+        "hitpoints": 180,
         "attack": 90,
         "curve": 1,
         "defense": 85,
@@ -6061,6 +6205,7 @@
         "type": "electric"
     },
     "146": {
+        "hitpoints": 180,
         "attack": 100,
         "curve": 1,
         "defense": 90,
@@ -6101,6 +6246,7 @@
         "type": "fire"
     },
     "147": {
+        "hitpoints": 82,
         "attack": 64,
         "curve": 1,
         "defense": 45,
@@ -6143,6 +6289,7 @@
         "type": "dragon"
     },
     "148": {
+        "hitpoints": 122,
         "attack": 84,
         "curve": 1,
         "defense": 65,
@@ -6180,6 +6327,7 @@
         "type": "dragon"
     },
     "149": {
+        "hitpoints": 182,
         "attack": 134,
         "curve": 1,
         "defense": 95,
@@ -6220,6 +6368,7 @@
         "type": "dragon"
     },
     "150": {
+        "hitpoints": 212,
         "attack": 110,
         "curve": 1,
         "defense": 90,
@@ -6265,6 +6414,7 @@
         "type": "psychic"
     },
     "151": {
+        "hitpoints": 200,
         "attack": 100,
         "curve": 1.3,
         "defense": 100,
