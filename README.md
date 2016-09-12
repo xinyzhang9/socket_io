@@ -34,7 +34,8 @@ This is the advanced pratice of socket.io. I plan to make a pvp and pve interati
 ### basic
 - [x] user chat channel
 - [x] generate random pokemon candidate
-- [x] before-battle preparation
+- [x] before-battle preparation  
+
 ### To do list
 - [ ] add hitpoints to each pokemon
 - [ ] hitpoint/energy display
