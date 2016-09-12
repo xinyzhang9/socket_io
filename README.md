@@ -24,13 +24,17 @@ open your browser at localhost:3000
 - [x] Don’t send the same message to the user that sent it himself. Instead, append the message directly as soon as he presses enter.
 - [x] Add “{user} is typing” functionality
 - [x] Show who’s online
-- [x] Add private messaging
+- [ ] Add private messaging
 
 ### screenshots
 ![alt tag](https://raw.githubusercontent.com/xinyzhang9/socket_io/master/chat/screen1.png)
 
 ## poke fight
 This is the advanced pratice of socket.io. I plan to make a pvp and pve interative games featuring pokemons.
+### basic
+- [x] user chat channel
+- [x] generate random pokemon candidate
+- [x] before-battle preparation
 ### To do list
 - [ ] add hitpoints to each pokemon
 - [ ] hitpoint/energy display
