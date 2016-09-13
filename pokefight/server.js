@@ -20,6 +20,20 @@ var userImgs = {}
 var userColors = {};
 var userPokemons = {};
 var vs = {}; //1 vs 1
+//initialize commands object
+var playerCmds = {};
+var playerOriCmds = {};
+
+
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
+}
+
 
 var djb2Code = function(str){
 	var hash = 5381;
@@ -28,21 +42,176 @@ var djb2Code = function(str){
 		hash = ((hash << 5) + hash) + charCode;
 	}
 	return hash;
-}
+};
 
 var isCommandValid = function(str){
   if (str.length !== 6){
     return false;
   }
   var s = str.toLowerCase();
-  console.log(s);
   for(var i = 0; i < s.length; i++){
     if(s[i] !== 'r' && s[i] !== 's' && s[i] !== 'p'){
       return false;
     }
   }
   return true;
-}
+};
+
+var thisRound = function(cmd,oricmd){
+  console.log('this round!');
+  var users = [],
+      user1,
+      user2,
+      single1 = [],
+      single2 = [],
+      move1 = [],
+      move2 = [];
+      
+  for (var key in cmd){
+    users.push(key);
+  }
+  //assign user
+  user1 = users[0];
+  user2 = users[1];
+  var cmd1 = cmd[user1];
+  var cmd2 = cmd[user2];
+  var oricmd1 = oricmd[user1];
+  var oricmd2 = oricmd[user2];
+
+  for(var i = 0; i < cmd1.length; i++){
+    switch(cmd1[i]){
+      case 'r':
+        switch(cmd2[i]){
+          case 'r':
+            single1.push(0);
+            single2.push(0);
+            break;
+          case 's':
+            single1.push(1);
+            single2.push(-1);
+            break;
+          case 'p':
+            single1.push(-1);
+            single2.push(1);
+            break;
+          default:
+            break;
+        }
+        break;
+      case 's':
+        switch(cmd2[i]){
+          case 'r':
+            single1.push(-1);
+            single2.push(1);
+            break;
+          case 's':
+            single1.push(0);
+            single2.push(0);
+            break;
+          case 'p':
+            single1.push(1);
+            single2.push(-1);
+            break;
+          default:
+            break;
+        }
+        break;
+      case 'p':
+        switch(cmd2[i]){
+          case 'r':
+            single1.push(1);
+            single2.push(-1);
+            break;
+          case 's':
+            single1.push(-1);
+            single2.push(1);
+            break;
+          case 'p':
+            single1.push(0);
+            single2.push(0);
+            break;
+          default:
+            break;
+        }
+        break;
+    }//end big switch
+  }//end big for
+
+  console.log('single1',single1);
+  console.log('single2',single2);
+
+  //check if moves are successful
+  var move_index1 = [];
+  var move_index2 = [];
+  //p1 move index
+  for(var i = 0; i < oricmd1.length; i++){
+    if(oricmd1[i] !== '1' && oricmd1[i] !== '2'){continue;}
+    else if(oricmd1[i] === '1'){
+      move_index1.push([i,i+1]);
+    }else{
+      move_index1.push([i,i+1,i+2]);
+    }
+  }
+
+  for(var i = 0; i < move_index1.length; i++){
+    var tmpList = move_index1[i];
+    var flag = 0;
+    for(var j = 0; j < tmpList.length; j++){
+      var index = tmpList[j];
+      if(single1[index] === -1){
+        flag = -100;
+        break;
+      }else{
+        flag += single1[index];
+      }
+    }
+    if(flag > 0){
+      move1.push(true);
+    }else{
+      move1.push(false);
+    }
+  }
+  console.log('move1',move1);
+
+
+  //p2 move index
+  for(var i = 0; i < oricmd2.length; i++){
+    if(oricmd2[i] !== '1' && oricmd2[i] !== '2'){continue;}
+    else if(oricmd2[i] === '1'){
+      move_index2.push([i,i+1]);
+    }else{
+      move_index2.push([i,i+1,i+2]);
+    }
+  }
+
+  for(var i = 0; i < move_index2.length; i++){
+    var tmpList = move_index2[i];
+    var flag = 0;
+    for(var j = 0; j < tmpList.length; j++){
+      var index = tmpList[j];
+      if(single2[index] === -1){
+        flag = -100;
+        break;
+      }else{
+        flag += single2[index];
+      }
+    }
+    if(flag > 0){
+      move2.push(true);
+    }else{
+      move2.push(false);
+    }
+  }
+  console.log('move2',move2);
+
+  return {
+    'single1':single1,
+    'single2':single2,
+    'move1':move1,
+    'move2':move2
+  };
+
+}//end thisRound
 
 var colors = ['black','orange','blue','steelblue','skyblue','purple','pink','gray','maroon','olive'];
 var getUserColor = function(str){
@@ -65,6 +234,8 @@ io.on('connection', function(socket){
   	delete userColors[socket.id];
     delete userPokemons[socket.id];
     delete vs[socket.id];
+    delete playerCmds[socket.id];
+    delete playerOriCmds[socket.id];
   	
   	io.emit('left room',msg);
   });
@@ -183,6 +354,47 @@ io.on('connection', function(socket){
           }else{
             var msg = "Your command is "+str;
             socket.emit('notice',msg);
+
+            playerCmds[socket.id] = str;
+            playerOriCmds[socket.id] = commands;
+
+            // console.log(playerCmds);
+            // console.log(playerOriCmds);
+
+            var len = Object.keys(playerCmds).length;
+            if(len >=2){
+              var msg = "Commands are completed for this round...";
+              socket.emit('notice',msg);
+              var msg = "Results for this round ...";
+              io.emit('notice',msg);
+              var round_res = thisRound(playerCmds,playerOriCmds);
+              console.log(round_res.single1);
+              console.log(round_res.single2);
+              console.log(round_res.move1);
+              console.log(round_res.move2);
+              /// (1) define the variable for the array index
+              var i = 0;
+              // (2) define the delayed loop function
+              function delayedLoop()
+              {
+              // (3) do action
+              var msg = round_res.single1[i];
+              io.emit('notice',msg);
+              // (4) if the end of the array has been reached, stop
+              if(++i == 6)
+              {
+              return;
+              }
+              // (5) recursively call the delayed loop function with a delay
+              setTimeout(delayedLoop, 1000);
+              }
+              delayedLoop(); // (6) start the loop
+
+            }else if(len == 1){
+              var msg = "Waiting for opponent's commands ...";
+              socket.emit('notice',msg);
+            }
+
           }
         }
 
