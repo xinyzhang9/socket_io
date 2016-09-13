@@ -65,7 +65,9 @@ var thisRound = function(cmd,oricmd){
       single1 = [],
       single2 = [],
       move1 = [],
-      move2 = [];
+      move2 = [],
+      supermove1 = [],
+      supermove2 = [];
       
   for (var key in cmd){
     users.push(key);
@@ -143,13 +145,21 @@ var thisRound = function(cmd,oricmd){
   //check if moves are successful
   var move_index1 = [];
   var move_index2 = [];
+  var supermove_index1 = [];
+  var supermove_index2 = [];
   //p1 move index
+  var cnt = 0;
   for(var i = 0; i < oricmd1.length; i++){
-    if(oricmd1[i] !== '1' && oricmd1[i] !== '2'){continue;}
+    if(oricmd1[i] !== '1' && oricmd1[i] !== '2'){
+      cnt += 1;
+      continue;
+    }
     else if(oricmd1[i] === '1'){
-      move_index1.push([i,i+1]);
+      move_index1.push([cnt,cnt+1]);
+      cnt += 2;
     }else{
-      move_index1.push([i,i+1,i+2]);
+      supermove_index1.push([cnt,cnt+1,cnt+2]);
+      cnt += 3;
     }
   }
 
@@ -165,7 +175,7 @@ var thisRound = function(cmd,oricmd){
         flag += single1[index];
       }
     }
-    if(flag > 0){
+    if(flag >= 0){
       move1.push(true);
     }else{
       move1.push(false);
@@ -173,14 +183,39 @@ var thisRound = function(cmd,oricmd){
   }
   console.log('move1',move1);
 
+  for(var i = 0; i < supermove_index1.length; i++){
+    var tmpList = supermove_index1[i];
+    var flag = 0;
+    for(var j = 0; j < tmpList.length; j++){
+      var index = tmpList[j];
+      if(single1[index] === -1){
+        flag = -100;
+        break;
+      }else{
+        flag += single1[index];
+      }
+    }
+    if(flag >= 0){
+      supermove1.push(true);
+    }else{
+      supermove1.push(false);
+    }
+  }
+  console.log('supermove1',supermove1);
 
   //p2 move index
+  cnt = 0; //reset cnt
   for(var i = 0; i < oricmd2.length; i++){
-    if(oricmd2[i] !== '1' && oricmd2[i] !== '2'){continue;}
+    if(oricmd2[i] !== '1' && oricmd2[i] !== '2'){
+      cnt += 1;
+      continue;
+    }
     else if(oricmd2[i] === '1'){
-      move_index2.push([i,i+1]);
+      move_index2.push([cnt,cnt+1]);
+      cnt += 2;
     }else{
-      move_index2.push([i,i+1,i+2]);
+      supermove_index2.push([cnt,cnt+1,cnt+2]);
+      cnt += 3;
     }
   }
 
@@ -196,7 +231,7 @@ var thisRound = function(cmd,oricmd){
         flag += single2[index];
       }
     }
-    if(flag > 0){
+    if(flag >= 0){
       move2.push(true);
     }else{
       move2.push(false);
@@ -204,11 +239,38 @@ var thisRound = function(cmd,oricmd){
   }
   console.log('move2',move2);
 
+  for(var i = 0; i < supermove_index2.length; i++){
+    var tmpList = supermove_index2[i];
+    var flag = 0;
+    for(var j = 0; j < tmpList.length; j++){
+      var index = tmpList[j];
+      if(single2[index] === -1){
+        flag = -100;
+        break;
+      }else{
+        flag += single2[index];
+      }
+    }
+    if(flag >= 0){
+      supermove2.push(true);
+    }else{
+      supermove2.push(false);
+    }
+  }
+  console.log('supermove2',supermove2);
+
+  console.log('move_index1',move_index1);
+  console.log('supermove_index1',supermove_index1);
+
   return {
+    'user1':user1,
+    'user2':user2,
     'single1':single1,
     'single2':single2,
     'move1':move1,
-    'move2':move2
+    'move2':move2,
+    'supermove1':supermove1,
+    'supermove2':supermove2
   };
 
 }//end thisRound
@@ -372,23 +434,51 @@ io.on('connection', function(socket){
               console.log(round_res.single2);
               console.log(round_res.move1);
               console.log(round_res.move2);
-              /// (1) define the variable for the array index
-              var i = 0;
-              // (2) define the delayed loop function
-              function delayedLoop()
+              // define the variable for the array index
+              var i = 0; //for single
+              var j = 0; //for move
+              var k = 0; //for supermove
+
+              // define the delayed loop function
+              function showSingleRes1()
               {
-              // (3) do action
-              var msg = round_res.single1[i];
+                if(++i >= 7)
+                { 
+                  showMoveRes1();
+                  //reset for next round
+                return;
+                }
+              // do action
+              var msg = round_res.single1[i-1];
               io.emit('notice',msg);
-              // (4) if the end of the array has been reached, stop
-              if(++i == 6)
-              {
-              return;
+              if(round_res.single1[i-1] < 0){
+                userPokemons[round_res.user1].hitpoints -= 10; //just for test
               }
-              // (5) recursively call the delayed loop function with a delay
-              setTimeout(delayedLoop, 1000);
+              
+              // recursively call the delayed loop function with a delay
+              setTimeout(showSingleRes1, 1000);
               }
-              delayedLoop(); // (6) start the loop
+
+              function showMoveRes1(){
+                if(++j >= round_res.move1.length+1){
+                  showSupermoveRes1();
+                  return;
+                }
+                var msg = "move res:" + round_res.move1[j-1];
+                io.emit('notice',msg);
+                setTimeout(showMoveRes1, 1000);
+              }
+
+              function showSupermoveRes1(){
+                if(++k >= round_res.supermove1.length+1){
+                  return;
+                }
+                var msg = "supermove res:" + round_res.supermove1[k-1];
+                io.emit('notice',msg);
+                setTimeout(showSupermoveRes1, 1000);
+              }
+
+              showSingleRes1(); // start the loop
 
             }else if(len == 1){
               var msg = "Waiting for opponent's commands ...";
