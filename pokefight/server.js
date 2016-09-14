@@ -10,6 +10,7 @@ var path = require('path');
 app.use(express.static(path.join(__dirname,'./client')));
 
 var pokemons = require('./pokemons.json');
+var poketypes = require('./poketypes.json');
 
 app.get('/', function(req, res){
   res.sendfile('index.html');
@@ -34,6 +35,72 @@ function sleep(milliseconds) {
   }
 }
 
+function damage(source,target,att_type){
+  var dmg = 0;
+  var res = 0;
+  var msg = "";
+  var fact = 1;
+  var att_type = userPokemons[source].type;
+  var def_type = userPokemons[target].type;
+  var att = userPokemons[source].attack;
+  var def = userPokemons[target].defense;
+  switch(att_type){
+    case '1':
+      //original damage
+      dmg = userPokemons[source].moves.damage;
+      //mp gain
+      if(userPokemons[source].mp + userPokemons[source].moves.energyInc > 100){
+        userPokemons[source].mp = 100;
+      }else{
+        userPokemons[source].mp += userPokemons[source].moves.energyInc;
+      }
+      if(poketypes[att_type].def_type){
+        fact *= poketypes[att_type].def_type;
+        if(poketypes[att_type].def_type < 1){
+          msg = "not effective";
+        }else{
+          msg = "very effective";
+        }
+      }
+      res = Math.floor(dmg * fact * att/(att + def));
+      break;
+    case '2':
+      if(userPokemons[source].supermoves.energyCost * 100 > userPokemons[source].mp){
+        res = 0;
+        msg = "not enough MP to release the supermove!";
+      }else{
+        userPokemons[source].mp -= userPokemons[source].supermoves.energyCost * 100;
+        dmg = userPokemons[source].supermoves.damage;
+        var rand = Math.random();
+        if(poketypes[att_type].def_type){
+          fact *= poketypes[att_type].def_type;
+          if(poketypes[att_type].def_type < 1){
+            msg = "not effective";
+          }else{
+            msg = "very effective";
+          }
+        }
+        if(rand < userPokemons[source].supermoves.criticalRatio){
+          fact *= 2;
+          msg = "critical";
+        }
+        
+        res = Math.floor(dmg * fact * att/(att + def));
+      }
+      break;
+    default:
+      dmg = 5;
+      if(poketypes[att_type].def_type){
+        fact *= poketypes[att_type].def_type;
+      }
+      res = Math.floor(dmg * fact * att/(att + def));
+      break;
+  }//end switch
+  return{
+    "message":msg,
+    "damage":res
+  }
+}
 
 var djb2Code = function(str){
 	var hash = 5381;
@@ -349,6 +416,7 @@ io.on('connection', function(socket){
           }
           var res = Object.assign({},
                                   data,
+                                  {mp:100},
                                   {key:index},
                                   {username:nicknames[socket.id]},
                                   {usercolor:userColors[socket.id]},
@@ -449,11 +517,39 @@ io.on('connection', function(socket){
                 return;
                 }
               // do action
-              var msg = round_res.single1[i-1];
-              io.emit('notice',msg);
+
+              // var msg = round_res.single1[i-1];
+              // io.emit('notice',msg);
+
+              //apply single damage
+              //user1 under attack
               if(round_res.single1[i-1] < 0){
-                userPokemons[round_res.user1].hitpoints -= 10; //just for test
+                var getDmg = damage(round_res.user2,round_res.user1,'s');
+                userPokemons[round_res.user1].hitpoints -= getDmg.damage;
+                var msg = getDmg.message;
+                if(userPokemons[round_res.user1].hitpoints < 0){
+                  userPokemons[round_res.user1].hitpoints = 0;
+                }
               }
+              //user2 under attack
+              if(round_res.single2[i-1] < 0){
+                var getDmg = damage(round_res.user1,round_res.user2,'s');
+                userPokemons[round_res.user2].hitpoints -= getDmg.damage;
+                var msg = getDmg.message;
+                if(userPokemons[round_res.user2].hitpoints < 0){
+                  userPokemons[round_res.user2].hitpoints = 0;
+                }
+              }
+
+              var data = {
+                user1:round_res.user1, //user id
+                user2:round_res.user2,
+                status:round_res.single1[i-1], //win or loss
+                status2:round_res.single2[i-1],
+                current1:playerCmds[round_res.user1][i-1], // s or r or p
+                current2:playerCmds[round_res.user2][i-1]
+              };
+              // io.emit("single_res",data);
               
               // recursively call the delayed loop function with a delay
               setTimeout(showSingleRes1, 1000);
@@ -494,7 +590,7 @@ io.on('connection', function(socket){
         var msg = "<b>Helper:</b> <p>r-rock, s-scissors, p-paper.</p><p>You should input a length-6 sequence after '@'.</p><p>For example, @rsrrpp </p><p>If your move command is 'rs' and your supermove command is 'rsp', you can input '@12s' which equals '@rsrsps'.</p><p>You can also input '@1ss1' which equals '@rsssrs'.</p>";
         socket.emit('notice',msg);
         break;
-      default:
+      default: //normal chat
         var title = nicknames[socket.id];
         var msg = msg;
         socket.broadcast.emit('chat message',{
