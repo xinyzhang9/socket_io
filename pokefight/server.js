@@ -498,10 +498,6 @@ io.on('connection', function(socket){
               var msg = "Results for this round ...";
               io.emit('notice',msg);
               var round_res = thisRound(playerCmds,playerOriCmds);
-              console.log(round_res.single1);
-              console.log(round_res.single2);
-              console.log(round_res.move1);
-              console.log(round_res.move2);
               // define the variable for the array index
               var i = 0; //for single
               var j = 0; //for move
@@ -518,8 +514,8 @@ io.on('connection', function(socket){
                 }
               // do action
 
-              // var msg = round_res.single1[i-1];
-              // io.emit('notice',msg);
+              var msg = round_res.single1[i-1];
+              io.emit('notice',msg);
 
               //apply single damage
               //user1 under attack
@@ -541,15 +537,18 @@ io.on('connection', function(socket){
                 }
               }
 
-              var data = {
-                user1:round_res.user1, //user id
-                user2:round_res.user2,
-                status:round_res.single1[i-1], //win or loss
-                status2:round_res.single2[i-1],
-                current1:playerCmds[round_res.user1][i-1], // s or r or p
-                current2:playerCmds[round_res.user2][i-1]
-              };
-              // io.emit("single_res",data);
+              var res = {
+                round_res.user1:{
+                  status:round_res.single1[i-1],
+                  current:playerCmds[round_res.user1][i-1]
+                },
+                round_res.user2:{
+                  status:round_res.single2[i-1],
+                  current:playerCmds[round_res.user2][i-1]
+                }
+              }
+
+              // io.emit("single_res",res);
               
               // recursively call the delayed loop function with a delay
               setTimeout(showSingleRes1, 1000);

@@ -104,6 +104,14 @@ socket.on('begin',function(res){
                                         ));
   
   scrollToBottom();
+});
+
+socket.on('single_res',function(res){
+  var self;
+  var opponent;
+  var selfPokemonImg = "";
+  var opponentPokemonImg = "";
+  
 })
 
 
