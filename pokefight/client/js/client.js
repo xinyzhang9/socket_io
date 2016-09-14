@@ -111,7 +111,29 @@ socket.on('single_res',function(res){
   var opponent;
   var selfPokemonImg = "";
   var opponentPokemonImg = "";
-  
+  var selfCurrentImg = "";
+  var opponentCurrentImg = "";
+  var statusArr  =['<span class = "gray">Lost</span>','<span class = "green">Draw</span>','<span class = "orange">Win</span>'];
+  for(var key in res){
+    if(res[key].username == nickname){
+      self = res[key];
+      selfPokemonImg = 'img/pokemons/'+res[key].pokemon.key + '.png';
+      selfCurrentImg = 'img/'+res[key].current + '.png';
+    }else{
+      opponent = res[key];
+      opponentPokemonImg = 'img/pokemons/'+res[key].pokemon.key + '.png';
+      opponentCurrentImg = 'img/'+res[key].current+'.png';
+    }
+  }
+  $('#messages').append($('<li>').html('#'+self.index));
+  $('#messages').append($('<li>').html('<div class = "msg"><img src = '+selfPokemonImg+'></br>'
+                                        +statusArr[self.status+1]+'</br><img src = '+selfCurrentImg+'></br></div>'
+
+                                        +'<div class = "msg dright"><img src = '+opponentPokemonImg+'></br>'
+                                        +statusArr[opponent.status+1]+'</br><img src = '+opponentCurrentImg+'></br></div>'
+                                        ));
+  scrollToBottom();
+
 })
 
 

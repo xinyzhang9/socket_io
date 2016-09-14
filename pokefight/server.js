@@ -514,8 +514,8 @@ io.on('connection', function(socket){
                 }
               // do action
 
-              var msg = round_res.single1[i-1];
-              io.emit('notice',msg);
+              // var msg = round_res.single1[i-1];
+              // io.emit('notice',msg);
 
               //apply single damage
               //user1 under attack
@@ -536,19 +536,26 @@ io.on('connection', function(socket){
                   userPokemons[round_res.user2].hitpoints = 0;
                 }
               }
-
+              var user1 = round_res.user1;
+              var user2 = round_res.user2;
               var res = {
-                round_res.user1:{
+                user1:{
+                  username:nicknames[user1],
+                  index:i,
+                  pokemon:userPokemons[user1],
                   status:round_res.single1[i-1],
                   current:playerCmds[round_res.user1][i-1]
                 },
-                round_res.user2:{
+                user2:{
+                  username:nicknames[user2],
+                  index:i,
+                  pokemon:userPokemons[user2],
                   status:round_res.single2[i-1],
                   current:playerCmds[round_res.user2][i-1]
                 }
               }
-
-              // io.emit("single_res",res);
+              console.dir(res);
+              io.emit("single_res",res);
               
               // recursively call the delayed loop function with a delay
               setTimeout(showSingleRes1, 1000);
