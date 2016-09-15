@@ -25,6 +25,29 @@ var vs = {}; //1 vs 1
 var playerCmds = {};
 var playerOriCmds = {};
 
+//utility functions
+function displayHP(user){
+  var index = userPokemons[user].key;
+  var original_hp = pokemons[index].hitpoints;
+  var total_units = Math.floor(original_hp / 5);
+  var current_hp = userPokemons[user].hitpoints;
+  var current_units = Math.floor(current_hp / 5);
+
+  //begin draw
+  var res = "";
+  res += '<b><span class = "red">';
+  for(var i = 0; i < total_units; i++){
+    if(i < current_units){
+      res += '|';
+    }else if(i === current_units){
+      res += '</span>';
+    }else{
+      res += '|';
+    }
+  }
+  res += '</b>';
+  return res;
+}
 
 function sleep(milliseconds) {
   var start = new Date().getTime();
@@ -35,7 +58,7 @@ function sleep(milliseconds) {
   }
 }
 
-function damage(source,target,att_type){
+function calcDamage(source,target,att_type){
   var dmg = 0;
   var res = 0;
   var msg = "";
@@ -500,8 +523,8 @@ io.on('connection', function(socket){
               var round_res = thisRound(playerCmds,playerOriCmds);
               // define the variable for the array index
               var i = 0; //for single
-              var j = 0; //for move
-              var k = 0; //for supermove
+              var j1 = 0,j2 = 0; //for move
+              var k1 = 0,k2 = 0;//for supermove
 
               // define the delayed loop function
               function showSingleRes1()
@@ -514,24 +537,22 @@ io.on('connection', function(socket){
                 }
               // do action
 
-              // var msg = round_res.single1[i-1];
-              // io.emit('notice',msg);
-
               //apply single damage
               //user1 under attack
+              var msg = ""; //initialize a message
               if(round_res.single1[i-1] < 0){
-                var getDmg = damage(round_res.user2,round_res.user1,'s');
+                var getDmg = calcDamage(round_res.user2,round_res.user1,'s');
                 userPokemons[round_res.user1].hitpoints -= getDmg.damage;
-                var msg = getDmg.message;
+                msg = getDmg.message;
                 if(userPokemons[round_res.user1].hitpoints < 0){
                   userPokemons[round_res.user1].hitpoints = 0;
                 }
               }
               //user2 under attack
               if(round_res.single2[i-1] < 0){
-                var getDmg = damage(round_res.user1,round_res.user2,'s');
+                var getDmg = calcDamage(round_res.user1,round_res.user2,'s');
                 userPokemons[round_res.user2].hitpoints -= getDmg.damage;
-                var msg = getDmg.message;
+                msg = getDmg.message;
                 if(userPokemons[round_res.user2].hitpoints < 0){
                   userPokemons[round_res.user2].hitpoints = 0;
                 }
@@ -542,6 +563,8 @@ io.on('connection', function(socket){
                 user1:{
                   username:nicknames[user1],
                   index:i,
+                  hp:displayHP(user1),
+                  message:msg,
                   pokemon:userPokemons[user1],
                   status:round_res.single1[i-1],
                   current:playerCmds[round_res.user1][i-1]
@@ -549,12 +572,13 @@ io.on('connection', function(socket){
                 user2:{
                   username:nicknames[user2],
                   index:i,
+                  hp:displayHP(user2),
+                  message:msg,
                   pokemon:userPokemons[user2],
                   status:round_res.single2[i-1],
                   current:playerCmds[round_res.user2][i-1]
                 }
               }
-              console.dir(res);
               io.emit("single_res",res);
               
               // recursively call the delayed loop function with a delay
@@ -562,25 +586,181 @@ io.on('connection', function(socket){
               }
 
               function showMoveRes1(){
-                if(++j >= round_res.move1.length+1){
-                  showSupermoveRes1();
+                if(++j1 >= round_res.move1.length+1){
+                  showMoveRes2();
                   return;
                 }
-                var msg = "move res:" + round_res.move1[j-1];
-                io.emit('notice',msg);
+                // var msg = "move res:" + round_res.move1[j-1];
+                // io.emit('notice',msg);
+                var user1 = round_res.user1;
+                var user2 = round_res.user2;
+                var damage = 0;
+                //user1 move success
+                var msg = ""; //initialize a message
+                if(round_res.move1[j1-1]){
+                  var getDmg = calcDamage(user1,user2,'1');
+                  damage = getDmg.damage;
+                  userPokemons[user2].hitpoints -= damage;
+                  msg = getDmg.message;
+                  if(userPokemons[user2].hitpoints < 0){
+                    userPokemons[user2].hitpoints = 0;
+                  }
+                }
+                
+                var res = {
+                  user1:{
+                    hp:displayHP(user1),
+                    username:nicknames[user1],
+                    attacker:true,
+                    damage:damage,
+                    message:msg,
+                    pokemon:userPokemons[user1],
+                    status:round_res.move1[j1-1],
+                  },
+                  user2:{
+                    hp:displayHP(user2),
+                    attacker:false,
+                    username:nicknames[user2],
+                    pokemon:userPokemons[user2],
+                  }
+                }
+                console.log('move1');
+                console.dir(res);
+                io.emit("move1_res",res);
                 setTimeout(showMoveRes1, 1000);
               }
 
-              function showSupermoveRes1(){
-                if(++k >= round_res.supermove1.length+1){
+              function showMoveRes2(){
+                if(++j2 >= round_res.move2.length+1){
+                  showSupermoveRes1(); //next show user1 supermove
                   return;
                 }
-                var msg = "supermove res:" + round_res.supermove1[k-1];
-                io.emit('notice',msg);
+                // var msg = "move res:" + round_res.move1[j2-1];
+                // io.emit('notice',msg);
+                var user1 = round_res.user1;
+                var user2 = round_res.user2;
+                var damage = 0;
+                //user2 move success
+                var msg = ""; //initialize a message
+                if(round_res.move2[j2-1]){
+                  var getDmg = calcDamage(user2,user1,'1');
+                  damage = getDmg.damage;
+                  userPokemons[user1].hitpoints -= damage;
+                  msg = getDmg.message;
+                  if(userPokemons[user1].hitpoints < 0){
+                    userPokemons[user1].hitpoints = 0;
+                  }
+                }
+                
+                var res = {
+                  user1:{
+                    hp:displayHP(user1),
+                    attacker:false,
+                    username:nicknames[user1],
+                    pokemon:userPokemons[user1],
+                  },
+                  user2:{
+                    hp:displayHP(user2),
+                    attacker:true,
+                    damage:damage,
+                    username:nicknames[user2],
+                    message:msg,
+                    pokemon:userPokemons[user2],
+                    status:round_res.move2[j2-1],
+                  }
+                }
+                console.log('move2');
+                console.dir(res);
+                io.emit("move2_res",res);
+                setTimeout(showMoveRes2, 1000);
+              }
+
+              function showSupermoveRes1(){
+                if(++k1 >= round_res.supermove1.length+1){
+                  showSupermoveRes2(); //next show user2 supermove
+                  return;
+                }
+                // var msg = "supermove res:" + round_res.supermove1[k1-1];
+                // io.emit('notice',msg);
+                var user1 = round_res.user1;
+                var user2 = round_res.user2;
+                var damage = 0;
+                //user1 supermove success
+                var msg = ""; //initialize a message
+                if(round_res.supermove1[k1-1]){
+                  var getDmg = calcDamage(user1,user2,'2');
+                  damage = getDmg.damage;
+                  userPokemons[user2].hitpoints -= damage;
+                  msg = getDmg.message;
+                  if(userPokemons[user2].hitpoints < 0){
+                    userPokemons[user2].hitpoints = 0;
+                  }
+                }
+                
+                var res = {
+                  user1:{
+                    hp:displayHP(user1),
+                    attacker:true,
+                    damage:damage,
+                    username:nicknames[user1],
+                    message:msg,
+                    pokemon:userPokemons[user1],
+                    status:round_res.supermove1[k1-1],
+                  },
+                  user2:{
+                    hp:displayHP(user2),
+                    attacker:false,
+                    username:nicknames[user2],
+                    pokemon:userPokemons[user2],
+                  }
+                }
+                io.emit("supermove1_res",res);
                 setTimeout(showSupermoveRes1, 1000);
               }
 
-              showSingleRes1(); // start the loop
+              function showSupermoveRes2(){
+                if(++k2 >= round_res.supermove2.length+1){
+                  return;
+                }
+                // var msg = "supermove res:" + round_res.supermove1[k2-1];
+                // io.emit('notice',msg);
+                var user1 = round_res.user1;
+                var user2 = round_res.user2;
+                var damage = 0;
+                //user2 move success
+                var msg = ""; //initialize a message
+                if(round_res.supermove2[k2-1]){
+                  var getDmg = calcDamage(user2,user1,'2');
+                  damage = getDmg.damage;
+                  userPokemons[user1].hitpoints -= damage;
+                  msg = getDmg.message;
+                  if(userPokemons[user1].hitpoints < 0){
+                    userPokemons[user1].hitpoints = 0;
+                  }
+                }
+                
+                var res = {
+                  user1:{
+                    hp:displayHP(user1),
+                    attacker:false,
+                    username:nicknames[user1],
+                    pokemon:userPokemons[user1],
+                  },
+                  user2:{
+                    hp:displayHP(user2),
+                    attacker:true,
+                    damage:damage,
+                    username:nicknames[user2],
+                    message:msg,
+                    pokemon:userPokemons[user2],
+                    status:round_res.supermove2[k2-1],
+                  }
+                }
+                io.emit("supermove2_res",res);
+                setTimeout(showSupermoveRes2, 1000);
+              }
+
+              showSingleRes1(); // start by calling first delayed function
 
             }else if(len == 1){
               var msg = "Waiting for opponent's commands ...";

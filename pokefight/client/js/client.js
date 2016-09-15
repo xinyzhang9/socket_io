@@ -126,14 +126,62 @@ socket.on('single_res',function(res){
     }
   }
   $('#messages').append($('<li>').html('#'+self.index));
-  $('#messages').append($('<li>').html('<div class = "msg"><img src = '+selfPokemonImg+'></br>'
-                                        +statusArr[self.status+1]+'</br><img src = '+selfCurrentImg+'></br></div>'
+  $('#messages').append($('<li>').html('<div class = "msg"><img src = '+selfPokemonImg+'>'+statusArr[self.status+1]+'</br>'
+                                        +'<span class = "hp">HP</span> '+self.hp +'</br><img src = '+selfCurrentImg+'></br></div>'
 
-                                        +'<div class = "msg dright"><img src = '+opponentPokemonImg+'></br>'
-                                        +statusArr[opponent.status+1]+'</br><img src = '+opponentCurrentImg+'></br></div>'
+                                        +'<div class = "msg dright">'+statusArr[opponent.status+1]+'<img src = '+opponentPokemonImg+'></br>'
+                                        +opponent.hp +' <span class = "hp">HP</span></br><img src = '+opponentCurrentImg+'></br></div>'
                                         ));
   scrollToBottom();
 
-})
+});
+
+socket.on('move1_res',function(res){
+  var self;
+  var opponent;
+  var selfPokemonImg = "";
+  var opponentPokemonImg = "";
+  var attacker = {};
+  for(var key in res){
+    if(res[key].username == nickname){
+      self = res[key];
+      selfPokemonImg = 'img/pokemons/'+res[key].pokemon.key + '.png';
+    }else{
+      opponent = res[key];
+      opponentPokemonImg = 'img/pokemons/'+res[key].pokemon.key + '.png';
+    }
+
+    //determine attacker
+    if(res[key].attacker === true){
+      attacker = res[key];
+    }
+  }
+  $('#messages').append($('<li>').html('<b>'+attacker.pokemon.name +'</b> releases the <b>'+attacker.pokemon.moves.name+'</b>, causes <b>'+attacker.damage +'</b> damage.'));
+  $('#messages').append($('<li>').html('<div class = "msg"><img src = '+selfPokemonImg+'></br><b>'
+                                        +self.pokemon.name+'</b></br>'
+                                        +'<span class = "hp">HP</span> '+self.hp+'</div>'
+
+                                        +'<div class = "msg dright"><img src = '+opponentPokemonImg+'></br><b>'
+                                        +opponent.pokemon.name+'</b></br>'
+                                        +opponent.hp+' <span class = "hp">HP</span></div>'
+                                        ));
+  scrollToBottom();
+  
+});
+
+socket.on('move2_res',function(res){
+  
+});
+
+socket.on('supermove1_res',function(res){
+  console.log('supermove1_res');
+  console.dir(res);
+});
+
+socket.on('supermove2_res',function(res){
+  console.log('supermove2_res');
+  console.dir(res);
+});
+
 
 
