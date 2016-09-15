@@ -127,10 +127,12 @@ socket.on('single_res',function(res){
   }
   $('#messages').append($('<li>').html('#'+self.index));
   $('#messages').append($('<li>').html('<div class = "msg"><img src = '+selfPokemonImg+'>'+statusArr[self.status+1]+'</br>'
-                                        +'<span class = "hp">HP</span> '+self.hp +'</br><img src = '+selfCurrentImg+'></br></div>'
+                                        +'<div class = "dleft"><span class = "red glyphicon glyphicon-heart"></span> '+self.hp +'</div></br>'
+                                        +'<div class = "dleft"><span class = "purple glyphicon glyphicon-fire"></span> '+self.mp +'</div><div><img src = '+selfCurrentImg+'></div></div>'
 
                                         +'<div class = "msg dright">'+statusArr[opponent.status+1]+'<img src = '+opponentPokemonImg+'></br>'
-                                        +opponent.hp +' <span class = "hp">HP</span></br><img src = '+opponentCurrentImg+'></br></div>'
+                                        +'<div class = "dright">'+opponent.hp +' <span class = "red glyphicon glyphicon-heart"></span></div></br>'
+                                        +'<div class = "dright">'+opponent.mp +' <span class = "purple glyphicon glyphicon-fire"></span></div><div><img src = '+opponentCurrentImg+'></div></div>'
                                         ));
   scrollToBottom();
 
@@ -156,14 +158,14 @@ socket.on('move1_res',function(res){
       attacker = res[key];
     }
   }
-  $('#messages').append($('<li>').html('<b>'+attacker.pokemon.name +'</b> releases the <b>'+attacker.pokemon.moves.name+'</b>, causes <b>'+attacker.damage +'</b> damage.'));
-  $('#messages').append($('<li>').html('<div class = "msg"><img src = '+selfPokemonImg+'></br><b>'
-                                        +self.pokemon.name+'</b></br>'
-                                        +'<span class = "hp">HP</span> '+self.hp+'</div>'
+  $('#messages').append($('<li>').html('<b>'+attacker.pokemon.name +'</b> releases <b>'+attacker.pokemon.moves.name+'</b>, causes <b>'+attacker.damage +'</b> damage.'));
+  $('#messages').append($('<li>').html('<div class = "msg"><img src = '+selfPokemonImg+'></br>'
+                                        +'<div class = "dleft"><span class = "red glyphicon glyphicon-heart"></span> '+self.hp +'</div></br>'
+                                        +'<div class = "dleft"><span class = "purple glyphicon glyphicon-fire"></span> '+self.mp +'</div></div>'
 
-                                        +'<div class = "msg dright"><img src = '+opponentPokemonImg+'></br><b>'
-                                        +opponent.pokemon.name+'</b></br>'
-                                        +opponent.hp+' <span class = "hp">HP</span></div>'
+                                        +'<div class = "msg dright"><img src = '+opponentPokemonImg+'></br>'
+                                        +'<div class = "dright">'+opponent.hp +' <span class = "red glyphicon glyphicon-heart"></span></div></br>'
+                                        +'<div class = "dright">'+opponent.mp +' <span class = "purple glyphicon glyphicon-fire"></span></div></div>'
                                         ));
   scrollToBottom();
   

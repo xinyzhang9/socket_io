@@ -32,10 +32,30 @@ function displayHP(user){
   var total_units = Math.floor(original_hp / 5);
   var current_hp = userPokemons[user].hitpoints;
   var current_units = Math.floor(current_hp / 5);
-
   //begin draw
   var res = "";
   res += '<b><span class = "red">';
+  for(var i = 0; i < total_units; i++){
+    if(i < current_units){
+      res += '|';
+    }else if(i === current_units){
+      res += '</span>';
+    }else{
+      res += '|';
+    }
+  }
+  res += '</b>';
+  return res;
+}
+
+function displayMP(user){
+  var index = userPokemons[user].key;
+  var total_units = 20;
+  var current_mp = userPokemons[user].mp;
+  var current_units = Math.floor(current_mp / 5);
+  //begin draw
+  var res = "";
+  res += '<b><span class = "skyblue">';
   for(var i = 0; i < total_units; i++){
     if(i < current_units){
       res += '|';
@@ -527,7 +547,7 @@ io.on('connection', function(socket){
               var k1 = 0,k2 = 0;//for supermove
 
               // define the delayed loop function
-              function showSingleRes1()
+              function showSingleRes()
               {
                 if(++i >= 7)
                 { 
@@ -564,6 +584,7 @@ io.on('connection', function(socket){
                   username:nicknames[user1],
                   index:i,
                   hp:displayHP(user1),
+                  mp:displayMP(user1),
                   message:msg,
                   pokemon:userPokemons[user1],
                   status:round_res.single1[i-1],
@@ -573,6 +594,7 @@ io.on('connection', function(socket){
                   username:nicknames[user2],
                   index:i,
                   hp:displayHP(user2),
+                  mp:displayMP(user2),
                   message:msg,
                   pokemon:userPokemons[user2],
                   status:round_res.single2[i-1],
@@ -582,7 +604,7 @@ io.on('connection', function(socket){
               io.emit("single_res",res);
               
               // recursively call the delayed loop function with a delay
-              setTimeout(showSingleRes1, 1000);
+              setTimeout(showSingleRes, 1000);
               }
 
               function showMoveRes1(){
@@ -610,6 +632,7 @@ io.on('connection', function(socket){
                 var res = {
                   user1:{
                     hp:displayHP(user1),
+                    mp:displayMP(user1),
                     username:nicknames[user1],
                     attacker:true,
                     damage:damage,
@@ -619,6 +642,7 @@ io.on('connection', function(socket){
                   },
                   user2:{
                     hp:displayHP(user2),
+                    mp:displayMP(user2),
                     attacker:false,
                     username:nicknames[user2],
                     pokemon:userPokemons[user2],
@@ -655,12 +679,14 @@ io.on('connection', function(socket){
                 var res = {
                   user1:{
                     hp:displayHP(user1),
+                    mp:displayMP(user1),
                     attacker:false,
                     username:nicknames[user1],
                     pokemon:userPokemons[user1],
                   },
                   user2:{
                     hp:displayHP(user2),
+                    mp:displayMP(user2),
                     attacker:true,
                     damage:damage,
                     username:nicknames[user2],
@@ -700,6 +726,7 @@ io.on('connection', function(socket){
                 var res = {
                   user1:{
                     hp:displayHP(user1),
+                    mp:displayMP(user1),
                     attacker:true,
                     damage:damage,
                     username:nicknames[user1],
@@ -709,6 +736,7 @@ io.on('connection', function(socket){
                   },
                   user2:{
                     hp:displayHP(user2),
+                    mp:displayMP(user2),
                     attacker:false,
                     username:nicknames[user2],
                     pokemon:userPokemons[user2],
@@ -742,12 +770,14 @@ io.on('connection', function(socket){
                 var res = {
                   user1:{
                     hp:displayHP(user1),
+                    mp:displayMP(user1),
                     attacker:false,
                     username:nicknames[user1],
                     pokemon:userPokemons[user1],
                   },
                   user2:{
                     hp:displayHP(user2),
+                    mp:displayMP(user2),
                     attacker:true,
                     damage:damage,
                     username:nicknames[user2],
@@ -760,7 +790,7 @@ io.on('connection', function(socket){
                 setTimeout(showSupermoveRes2, 1000);
               }
 
-              showSingleRes1(); // start by calling first delayed function
+              showSingleRes(); // start by calling first delayed function
 
             }else if(len == 1){
               var msg = "Waiting for opponent's commands ...";

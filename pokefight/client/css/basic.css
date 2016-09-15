@@ -15,6 +15,7 @@
       }
       .dleft{
         display:inline-block;
+        float:left;
       }
       .dright{
         display:inline-block;
@@ -142,7 +143,10 @@
   .hp{
     background-color:steelblue;
     color:white;
-    padding:2px;
+  }
+  .mp{
+    background-color:purple;
+    color:white;
   }
   .att{
     background-color:maroon;
