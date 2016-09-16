@@ -26,6 +26,25 @@ var playerCmds = {};
 var playerOriCmds = {};
 
 //utility functions
+function battleOn(user1,user2){
+  var pokemon1 = userPokemons[user1];
+  var pokemon2 = userPokemons[user2];
+  if (pokemon1.hitpoints > 0 && pokemon2.hitpoints > 0){
+    return true;
+  }else{
+    return false;
+  }
+}
+
+function battleWinner(user1,user2){
+  var pokemon1 = userPokemons[user1];
+  var pokemon2 = userPokemons[user2];
+  if(pokemon1.hitpoints > 0){
+    return user1;
+  }else{
+    return user2;
+  }
+}
 function displayHP(user){
   var index = userPokemons[user].key;
   var original_hp = pokemons[index].hitpoints;
@@ -78,7 +97,7 @@ function sleep(milliseconds) {
   }
 }
 
-function calcDamage(source,target,att_type){
+function calcDamage(source,target,type){
   var dmg = 0;
   var res = 0;
   var msg = "";
@@ -87,9 +106,13 @@ function calcDamage(source,target,att_type){
   var def_type = userPokemons[target].type;
   var att = userPokemons[source].attack;
   var def = userPokemons[target].defense;
-  switch(att_type){
+
+  console.log('att_type',att_type);
+  console.log('def_type',def_type);
+  switch(type){
     case '1':
       //original damage
+      console.log('normal move!')
       dmg = userPokemons[source].moves.damage;
       //mp gain
       if(userPokemons[source].mp + userPokemons[source].moves.energyInc > 100){
@@ -97,9 +120,9 @@ function calcDamage(source,target,att_type){
       }else{
         userPokemons[source].mp += userPokemons[source].moves.energyInc;
       }
-      if(poketypes[att_type].def_type){
-        fact *= poketypes[att_type].def_type;
-        if(poketypes[att_type].def_type < 1){
+      if(poketypes[att_type][def_type] !== undefined){
+        fact *= poketypes[att_type][def_type];
+        if(poketypes[att_type][def_type] < 1){
           msg = "not effective";
         }else{
           msg = "very effective";
@@ -108,21 +131,22 @@ function calcDamage(source,target,att_type){
       res = Math.floor(dmg * fact * att/(att + def));
       break;
     case '2':
+      console.log('supermove!')
       if(userPokemons[source].supermoves.energyCost * 100 > userPokemons[source].mp){
         res = 0;
         msg = "not enough MP to release the supermove!";
       }else{
         userPokemons[source].mp -= userPokemons[source].supermoves.energyCost * 100;
         dmg = userPokemons[source].supermoves.damage;
-        var rand = Math.random();
-        if(poketypes[att_type].def_type){
-          fact *= poketypes[att_type].def_type;
-          if(poketypes[att_type].def_type < 1){
+        if(poketypes[att_type][def_type] !== undefined){
+          fact *= poketypes[att_type][def_type];
+          if(poketypes[att_type][def_type] < 1){
             msg = "not effective";
           }else{
             msg = "very effective";
           }
         }
+        var rand = Math.random();
         if(rand < userPokemons[source].supermoves.criticalRatio){
           fact *= 2;
           msg = "critical";
@@ -132,6 +156,7 @@ function calcDamage(source,target,att_type){
       }
       break;
     default:
+      console.log('single move!')
       dmg = 5;
       if(poketypes[att_type].def_type){
         fact *= poketypes[att_type].def_type;
@@ -434,7 +459,7 @@ io.on('connection', function(socket){
       case '#': // pokemon info
         //random index for pokemon
         var post = msg.slice(1);
-        var randomIndex = Math.floor(Math.random()*151+1);
+        var randomIndex = Math.floor(Math.random()*151)+1;
         var index = (1 <= parseInt(post) && parseInt(post) <= 151)? post : randomIndex.toString();
         var data = pokemons[index];
         if(data === undefined){
@@ -545,6 +570,8 @@ io.on('connection', function(socket){
               var i = 0; //for single
               var j1 = 0,j2 = 0; //for move
               var k1 = 0,k2 = 0;//for supermove
+
+              showSingleRes(); // start by calling first delayed function
 
               // define the delayed loop function
               function showSingleRes()
@@ -703,7 +730,18 @@ io.on('connection', function(socket){
 
               function showSupermoveRes1(){
                 if(++k1 >= round_res.supermove1.length+1){
-                  showSupermoveRes2(); //next show user2 supermove
+                  if(!battleOn(round_res.user1,round_res.user2)){
+                    var winner = battleWinner(round_res.user1,round_res.user2);
+                    var notice = "<span class = 'glyphicon glyphicon-queen gold'></span> Battle ends! The winner is <b>"+nicknames[winner]+'</b>';
+                    io.emit('notice',notice);
+                    userPokemons = {};
+                    vs = {};
+                    var notice = "enter # to prepare for another battle!";
+                    io.emit('notice',notice);
+                  }else{
+                    showSupermoveRes2(); //next show user2 supermove
+                  }
+                  
                   return;
                 }
                 // var msg = "supermove res:" + round_res.supermove1[k1-1];
@@ -748,6 +786,22 @@ io.on('connection', function(socket){
 
               function showSupermoveRes2(){
                 if(++k2 >= round_res.supermove2.length+1){
+                  //end of all moves result. clear battle buffer
+                  if(battleOn(round_res.user1,round_res.user2)){
+                    playerCmds = {};
+                    playerOriCmds = {};
+                    var notice = "please enter your battle command: ";
+                    io.emit('notice',notice);
+                  }else{
+                    var winner = battleWinner(round_res.user1,round_res.user2);
+                    var notice = "<span class = 'glyphicon glyphicon-queen gold'></span> Battle ends! The winner is <b>"+nicknames[winner]+'</b>';
+                    io.emit('notice',notice);
+                    userPokemons = {};
+                    vs = {};
+                    var notice = "enter # to prepare for another battle!";
+                    io.emit('notice',notice);
+                  }
+                  
                   return;
                 }
                 // var msg = "supermove res:" + round_res.supermove1[k2-1];
@@ -790,7 +844,6 @@ io.on('connection', function(socket){
                 setTimeout(showSupermoveRes2, 1000);
               }
 
-              showSingleRes(); // start by calling first delayed function
 
             }else if(len == 1){
               var msg = "Waiting for opponent's commands ...";

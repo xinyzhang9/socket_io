@@ -81,7 +81,19 @@
         height: 100px;
         display: inline-block;
       }
-        .grass{
+      img.block{
+        width: 100px;
+        height: 100px;
+        display:block;
+      }
+      img.rblock{
+        width: 100px;
+        height: 100px;
+        display:block;
+        float:right;
+      }
+
+  .grass{
     color: green;
     font-weight: bolder;
   }
@@ -143,10 +155,7 @@
   .hp{
     background-color:steelblue;
     color:white;
-  }
-  .mp{
-    background-color:purple;
-    color:white;
+    padding:2px;
   }
   .att{
     background-color:maroon;

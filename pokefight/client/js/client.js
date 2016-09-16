@@ -127,12 +127,12 @@ socket.on('single_res',function(res){
   }
   $('#messages').append($('<li>').html('#'+self.index));
   $('#messages').append($('<li>').html('<div class = "msg"><img src = '+selfPokemonImg+'>'+statusArr[self.status+1]+'</br>'
-                                        +'<div class = "dleft"><span class = "red glyphicon glyphicon-heart"></span> '+self.hp +'</div></br>'
-                                        +'<div class = "dleft"><span class = "purple glyphicon glyphicon-fire"></span> '+self.mp +'</div><div><img src = '+selfCurrentImg+'></div></div>'
+                                        +'<div class = "dleft"><span class = "green glyphicon glyphicon-heart"></span> '+self.hp +'</div></br>'
+                                        +'<div class = "dleft"><span class = "purple glyphicon glyphicon-fire"></span> '+self.mp +'</div><div><img class = "block" src = '+selfCurrentImg+'></div></div>'
 
                                         +'<div class = "msg dright">'+statusArr[opponent.status+1]+'<img src = '+opponentPokemonImg+'></br>'
-                                        +'<div class = "dright">'+opponent.hp +' <span class = "red glyphicon glyphicon-heart"></span></div></br>'
-                                        +'<div class = "dright">'+opponent.mp +' <span class = "purple glyphicon glyphicon-fire"></span></div><div><img src = '+opponentCurrentImg+'></div></div>'
+                                        +'<div class = "dright">'+opponent.hp +' <span class = "green glyphicon glyphicon-heart"></span></div></br>'
+                                        +'<div class = "dright">'+opponent.mp +' <span class = "purple glyphicon glyphicon-fire"></span></div><div><img class = "rblock" src = '+opponentCurrentImg+'></div></div>'
                                         ));
   scrollToBottom();
 
@@ -158,31 +158,127 @@ socket.on('move1_res',function(res){
       attacker = res[key];
     }
   }
-  $('#messages').append($('<li>').html('<b>'+attacker.pokemon.name +'</b> releases <b>'+attacker.pokemon.moves.name+'</b>, causes <b>'+attacker.damage +'</b> damage.'));
-  $('#messages').append($('<li>').html('<div class = "msg"><img src = '+selfPokemonImg+'></br>'
-                                        +'<div class = "dleft"><span class = "red glyphicon glyphicon-heart"></span> '+self.hp +'</div></br>'
-                                        +'<div class = "dleft"><span class = "purple glyphicon glyphicon-fire"></span> '+self.mp +'</div></div>'
+  if(attacker.damage > 0){
+    $('#messages').append($('<li>').html('<b>'+attacker.pokemon.name +'</b> releases <b>'+attacker.pokemon.moves.name+'</b>, causes <b>'+attacker.damage +'</b> damage.'));
+    $('#messages').append($('<li>').html('<div class = "msg"><img src = '+selfPokemonImg+'></br>'
+                                          +'<div class = "dleft"><span class = "green glyphicon glyphicon-heart"></span> '+self.hp +'</div></br>'
+                                          +'<div class = "dleft"><span class = "purple glyphicon glyphicon-fire"></span> '+self.mp +'</div></div>'
 
-                                        +'<div class = "msg dright"><img src = '+opponentPokemonImg+'></br>'
-                                        +'<div class = "dright">'+opponent.hp +' <span class = "red glyphicon glyphicon-heart"></span></div></br>'
-                                        +'<div class = "dright">'+opponent.mp +' <span class = "purple glyphicon glyphicon-fire"></span></div></div>'
-                                        ));
-  scrollToBottom();
+                                          +'<div class = "msg dright"><img src = '+opponentPokemonImg+'></br>'
+                                          +'<div class = "dright">'+opponent.hp +' <span class = "green glyphicon glyphicon-heart"></span></div></br>'
+                                          +'<div class = "dright">'+opponent.mp +' <span class = "purple glyphicon glyphicon-fire"></span></div></div>'
+                                          ));
+    scrollToBottom();
+  }
+  
   
 });
 
 socket.on('move2_res',function(res){
+  var self;
+  var opponent;
+  var selfPokemonImg = "";
+  var opponentPokemonImg = "";
+  var attacker = {};
+  for(var key in res){
+    if(res[key].username == nickname){
+      self = res[key];
+      selfPokemonImg = 'img/pokemons/'+res[key].pokemon.key + '.png';
+    }else{
+      opponent = res[key];
+      opponentPokemonImg = 'img/pokemons/'+res[key].pokemon.key + '.png';
+    }
+
+    //determine attacker
+    if(res[key].attacker === true){
+      attacker = res[key];
+    }
+  }
+
+  if(attacker.damage > 0){
+    $('#messages').append($('<li>').html('<b>'+attacker.pokemon.name +'</b> releases <b>'+attacker.pokemon.moves.name+'</b>, causes <b>'+attacker.damage +'</b> damage.'));
+    $('#messages').append($('<li>').html('<div class = "msg"><img src = '+selfPokemonImg+'></br>'
+                                          +'<div class = "dleft"><span class = "green glyphicon glyphicon-heart"></span> '+self.hp +'</div></br>'
+                                          +'<div class = "dleft"><span class = "purple glyphicon glyphicon-fire"></span> '+self.mp +'</div></div>'
+
+                                          +'<div class = "msg dright"><img src = '+opponentPokemonImg+'></br>'
+                                          +'<div class = "dright">'+opponent.hp +' <span class = "green glyphicon glyphicon-heart"></span></div></br>'
+                                          +'<div class = "dright">'+opponent.mp +' <span class = "purple glyphicon glyphicon-fire"></span></div></div>'
+                                          ));
+    scrollToBottom();
+  }
+  
   
 });
 
 socket.on('supermove1_res',function(res){
-  console.log('supermove1_res');
-  console.dir(res);
+  var self;
+  var opponent;
+  var selfPokemonImg = "";
+  var opponentPokemonImg = "";
+  var attacker = {};
+  for(var key in res){
+    if(res[key].username == nickname){
+      self = res[key];
+      selfPokemonImg = 'img/pokemons/'+res[key].pokemon.key + '.png';
+    }else{
+      opponent = res[key];
+      opponentPokemonImg = 'img/pokemons/'+res[key].pokemon.key + '.png';
+    }
+
+    //determine attacker
+    if(res[key].attacker === true){
+      attacker = res[key];
+    }
+  }
+
+  if(attacker.damage > 0){
+    $('#messages').append($('<li>').html('<b>'+attacker.pokemon.name +'</b> releases <b>'+attacker.pokemon.supermoves.name+'</b>, causes <b>'+attacker.damage +'</b> damage.'+attacker.message));
+    $('#messages').append($('<li>').html('<div class = "msg"><img src = '+selfPokemonImg+'></br>'
+                                          +'<div class = "dleft"><span class = "green glyphicon glyphicon-heart"></span> '+self.hp +'</div></br>'
+                                          +'<div class = "dleft"><span class = "purple glyphicon glyphicon-fire"></span> '+self.mp +'</div></div>'
+
+                                          +'<div class = "msg dright"><img src = '+opponentPokemonImg+'></br>'
+                                          +'<div class = "dright">'+opponent.hp +' <span class = "green glyphicon glyphicon-heart"></span></div></br>'
+                                          +'<div class = "dright">'+opponent.mp +' <span class = "purple glyphicon glyphicon-fire"></span></div></div>'
+                                          ));
+    scrollToBottom();
+  }
 });
 
 socket.on('supermove2_res',function(res){
-  console.log('supermove2_res');
-  console.dir(res);
+  var self;
+  var opponent;
+  var selfPokemonImg = "";
+  var opponentPokemonImg = "";
+  var attacker = {};
+  for(var key in res){
+    if(res[key].username == nickname){
+      self = res[key];
+      selfPokemonImg = 'img/pokemons/'+res[key].pokemon.key + '.png';
+    }else{
+      opponent = res[key];
+      opponentPokemonImg = 'img/pokemons/'+res[key].pokemon.key + '.png';
+    }
+
+    //determine attacker
+    if(res[key].attacker === true){
+      attacker = res[key];
+    }
+  }
+
+  if(attacker.damage > 0){
+    $('#messages').append($('<li>').html('<b>'+attacker.pokemon.name +'</b> releases <b>'+attacker.pokemon.supermoves.name+'</b>, causes <b>'+attacker.damage +'</b> damage. '+attacker.message));
+    $('#messages').append($('<li>').html('<div class = "msg"><img src = '+selfPokemonImg+'></br>'
+                                          +'<div class = "dleft"><span class = "green glyphicon glyphicon-heart"></span> '+self.hp +'</div></br>'
+                                          +'<div class = "dleft"><span class = "purple glyphicon glyphicon-fire"></span> '+self.mp +'</div></div>'
+
+                                          +'<div class = "msg dright"><img src = '+opponentPokemonImg+'></br>'
+                                          +'<div class = "dright">'+opponent.hp +' <span class = "green glyphicon glyphicon-heart"></span></div></br>'
+                                          +'<div class = "dright">'+opponent.mp +' <span class = "purple glyphicon glyphicon-fire"></span></div></div>'
+                                          ));
+    scrollToBottom();
+  }
 });
 
 
