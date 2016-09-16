@@ -14,11 +14,11 @@
         color: grey;
       }
       .dleft{
-        display:inline-block;
+        display:block;
         float:left;
       }
       .dright{
-        display:inline-block;
+        display:block;
         float:right;
       }
       #check_online{
@@ -81,16 +81,10 @@
         height: 100px;
         display: inline-block;
       }
-      img.block{
-        width: 100px;
-        height: 100px;
-        display:block;
-      }
-      img.rblock{
-        width: 100px;
-        height: 100px;
-        display:block;
-        float:right;
+      img.smaller{
+        width: 50px;
+        height: 50px;
+        display:inline-block;
       }
 
   .grass{

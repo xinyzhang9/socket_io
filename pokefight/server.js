@@ -736,7 +736,7 @@ io.on('connection', function(socket){
                     io.emit('notice',notice);
                     userPokemons = {};
                     vs = {};
-                    var notice = "enter # to prepare for another battle!";
+                    var notice = "Enter # to prepare for another battle!";
                     io.emit('notice',notice);
                   }else{
                     showSupermoveRes2(); //next show user2 supermove

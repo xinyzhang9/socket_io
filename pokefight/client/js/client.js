@@ -126,14 +126,14 @@ socket.on('single_res',function(res){
     }
   }
   $('#messages').append($('<li>').html('#'+self.index));
-  $('#messages').append($('<li>').html('<div class = "msg"><img src = '+selfPokemonImg+'>'+statusArr[self.status+1]+'</br>'
-                                        +'<div class = "dleft"><span class = "green glyphicon glyphicon-heart"></span> '+self.hp +'</div></br>'
-                                        +'<div class = "dleft"><span class = "purple glyphicon glyphicon-fire"></span> '+self.mp +'</div><div><img class = "block" src = '+selfCurrentImg+'></div></div>'
+  $('#messages').append($('<li>').html('<div class = "msg"><img src = '+selfPokemonImg+'><img class = "smaller" src = '+selfCurrentImg+'></br>'
+                                          +'<div class = "dleft"><span class = "green glyphicon glyphicon-heart"></span> '+self.hp +'</div></br>'
+                                          +'<div class = "dleft"><span class = "purple glyphicon glyphicon-fire"></span> '+self.mp +'</div></div>'
 
-                                        +'<div class = "msg dright">'+statusArr[opponent.status+1]+'<img src = '+opponentPokemonImg+'></br>'
-                                        +'<div class = "dright">'+opponent.hp +' <span class = "green glyphicon glyphicon-heart"></span></div></br>'
-                                        +'<div class = "dright">'+opponent.mp +' <span class = "purple glyphicon glyphicon-fire"></span></div><div><img class = "rblock" src = '+opponentCurrentImg+'></div></div>'
-                                        ));
+                                          +'<div class = "msg dright"><img class = "smaller" src = '+opponentCurrentImg+'><img src = '+opponentPokemonImg+'></br>'
+                                          +'<div class = "dright">'+opponent.hp +' <span class = "green glyphicon glyphicon-heart"></span></div></br>'
+                                          +'<div class = "dright">'+opponent.mp +' <span class = "purple glyphicon glyphicon-fire"></span></div></div>'
+                                          ));
   scrollToBottom();
 
 });
@@ -159,7 +159,7 @@ socket.on('move1_res',function(res){
     }
   }
   if(attacker.damage > 0){
-    $('#messages').append($('<li>').html('<b>'+attacker.pokemon.name +'</b> releases <b>'+attacker.pokemon.moves.name+'</b>, causes <b>'+attacker.damage +'</b> damage.'));
+    $('#messages').append($('<li>').html('<b>'+attacker.pokemon.name +'</b> releases <b>'+attacker.pokemon.moves.name+'</b>, causes <span class ="red"><b>'+attacker.damage +'</b></span> damage.'));
     $('#messages').append($('<li>').html('<div class = "msg"><img src = '+selfPokemonImg+'></br>'
                                           +'<div class = "dleft"><span class = "green glyphicon glyphicon-heart"></span> '+self.hp +'</div></br>'
                                           +'<div class = "dleft"><span class = "purple glyphicon glyphicon-fire"></span> '+self.mp +'</div></div>'
@@ -196,7 +196,7 @@ socket.on('move2_res',function(res){
   }
 
   if(attacker.damage > 0){
-    $('#messages').append($('<li>').html('<b>'+attacker.pokemon.name +'</b> releases <b>'+attacker.pokemon.moves.name+'</b>, causes <b>'+attacker.damage +'</b> damage.'));
+    $('#messages').append($('<li>').html('<b>'+attacker.pokemon.name +'</b> releases <b>'+attacker.pokemon.moves.name+'</b>, causes <span class ="red"><b>'+attacker.damage +'</b></span> damage.'));
     $('#messages').append($('<li>').html('<div class = "msg"><img src = '+selfPokemonImg+'></br>'
                                           +'<div class = "dleft"><span class = "green glyphicon glyphicon-heart"></span> '+self.hp +'</div></br>'
                                           +'<div class = "dleft"><span class = "purple glyphicon glyphicon-fire"></span> '+self.mp +'</div></div>'
@@ -233,7 +233,7 @@ socket.on('supermove1_res',function(res){
   }
 
   if(attacker.damage > 0){
-    $('#messages').append($('<li>').html('<b>'+attacker.pokemon.name +'</b> releases <b>'+attacker.pokemon.supermoves.name+'</b>, causes <b>'+attacker.damage +'</b> damage.'+attacker.message));
+    $('#messages').append($('<li>').html('<b>'+attacker.pokemon.name +'</b> releases <b>'+attacker.pokemon.supermoves.name+'</b>, causes <span class ="red"><b>'+attacker.damage +'</b></span> damage. <span class = "green">'+attacker.message+'</span>'));
     $('#messages').append($('<li>').html('<div class = "msg"><img src = '+selfPokemonImg+'></br>'
                                           +'<div class = "dleft"><span class = "green glyphicon glyphicon-heart"></span> '+self.hp +'</div></br>'
                                           +'<div class = "dleft"><span class = "purple glyphicon glyphicon-fire"></span> '+self.mp +'</div></div>'
@@ -268,7 +268,7 @@ socket.on('supermove2_res',function(res){
   }
 
   if(attacker.damage > 0){
-    $('#messages').append($('<li>').html('<b>'+attacker.pokemon.name +'</b> releases <b>'+attacker.pokemon.supermoves.name+'</b>, causes <b>'+attacker.damage +'</b> damage. '+attacker.message));
+    $('#messages').append($('<li>').html('<b>'+attacker.pokemon.name +'</b> releases <b>'+attacker.pokemon.supermoves.name+'</b>, causes <span class ="red"><b>'+attacker.damage +'</b></span> damage. <span class = "green">'+attacker.message+'</span>'));
     $('#messages').append($('<li>').html('<div class = "msg"><img src = '+selfPokemonImg+'></br>'
                                           +'<div class = "dleft"><span class = "green glyphicon glyphicon-heart"></span> '+self.hp +'</div></br>'
                                           +'<div class = "dleft"><span class = "purple glyphicon glyphicon-fire"></span> '+self.mp +'</div></div>'
