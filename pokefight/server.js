@@ -451,6 +451,8 @@ io.on('connection', function(socket){
   		msg = "----- Someone has joined the chat -----"
   	}	
   	io.emit('enter room',msg)
+    var notice = "<p>Welcome to pokemon fight game!</p><p>press <b>#</b> to select a pokemon.</p><p>Enter <b>?</b> to view the battle instructions.</p><p>Press <b>~</b> to view your pokemon infomation at any time.</p><p>Have fun!</p>";
+    socket.emit('notice',notice);
   });
 
   socket.on('chat message', function(msg){
@@ -856,8 +858,17 @@ io.on('connection', function(socket){
         break;
       case '?':
         //answer questions about rsp
-        var msg = "<b>Helper:</b> <p>r-rock, s-scissors, p-paper.</p><p>You should input a length-6 sequence after '@'.</p><p>For example, @rsrrpp </p><p>If your move command is 'rs' and your supermove command is 'rsp', you can input '@12s' which equals '@rsrsps'.</p><p>You can also input '@1ss1' which equals '@rsssrs'.</p>";
+        var msg = "<p><b>Battle Helper:</b></p><p>r-rock, s-scissors, p-paper.</p><p>You should input a length-6 sequence after '@'.</p><p>For example, @rsrrpp </p><p>If your move command is 'rs' and your supermove command is 'rsp', you can input '@12s' which equals '@rsrsps'.</p><p>You can also input '@1ss1' which equals '@rsssrs'.</p><p>You can press <b>~</b> to view your pokemon infomation at any times.</p>";
         socket.emit('notice',msg);
+        break;
+      case '~':
+        if(userPokemons[socket.id] != undefined){
+          var res = userPokemons[socket.id]
+          socket.emit('info',res);
+        }else{
+          var notice = 'You have not selected a pokemon yet! To do that,press #';
+          socket.emit('notice',notice);
+        }
         break;
       default: //normal chat
         var title = nicknames[socket.id];

@@ -73,11 +73,10 @@ socket.on('info',function(res){
                                         +'<span class = "hp">HP</span> '+res.hitpoints.toString()+' <span class = "att">ATT</span> '+res.attack.toString() + ' <span class = "def">DEF</span> '+res.defense.toString() +'</div>'));
   $('#messages').append($('<li>').html('<b>Move:</b> '+res.moves.name+ ' | <b>Damage:</b> '+res.moves.damage + ' | <b>Power Gain:</b> '+res.moves.energyInc + ' | <b>Command:</b> '+res.move_command));
   $('#messages').append($('<li>').html('<b>Supermove:</b> '+res.supermoves.name+ ' | <b>Damage:</b> '+res.supermoves.damage + ' | <b>Power Cost:</b> '+res.supermoves.energyCost * 100 + ' | <b>Command:</b> '+res.supermove_command));
-  $('#messages').append($('<li class = "green">').text("input ! to choose this pokemon."));
+  $('#messages').append($('<li class = "green">').text("input ! to confirm this pokemon."));
   $('#messages').append($('<li class = "green">').text("input # to continue switching pokemons."));
   scrollToBottom();
 });
-
   
 socket.on('begin',function(res){
   var self;
@@ -117,11 +116,11 @@ socket.on('single_res',function(res){
   for(var key in res){
     if(res[key].username == nickname){
       self = res[key];
-      selfPokemonImg = 'img/pokemons/'+res[key].pokemon.key + '.png';
+      selfPokemonImg = 'animation/'+res[key].pokemon.key + '.gif';
       selfCurrentImg = 'img/'+res[key].current + '.png';
     }else{
       opponent = res[key];
-      opponentPokemonImg = 'img/pokemons/'+res[key].pokemon.key + '.png';
+      opponentPokemonImg = 'animation/'+res[key].pokemon.key + '.gif';
       opponentCurrentImg = 'img/'+res[key].current+'.png';
     }
   }
