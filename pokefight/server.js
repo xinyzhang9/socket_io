@@ -5,7 +5,8 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-
+var client = require('socket.io-client');
+var AI = client.connect("http://localhost:3000");
 var path = require('path');
 app.use(express.static(path.join(__dirname,'./client')));
 
@@ -24,6 +25,8 @@ var vs = {}; //1 vs 1
 //initialize commands object
 var playerCmds = {};
 var playerOriCmds = {};
+
+var isAI = false;
 
 //utility functions
 function battleOn(user1,user2){
@@ -107,8 +110,6 @@ function calcDamage(source,target,type){
   var att = userPokemons[source].attack;
   var def = userPokemons[target].defense;
 
-  console.log('att_type',att_type);
-  console.log('def_type',def_type);
   switch(type){
     case '1':
       //original damage
@@ -118,7 +119,8 @@ function calcDamage(source,target,type){
       if(userPokemons[source].mp + userPokemons[source].moves.energyInc > 100){
         userPokemons[source].mp = 100;
       }else{
-        userPokemons[source].mp += userPokemons[source].moves.energyInc;
+        //modify energy increase by *3
+        userPokemons[source].mp += userPokemons[source].moves.energyInc * 3;
       }
       if(poketypes[att_type][def_type] !== undefined){
         fact *= poketypes[att_type][def_type];
@@ -274,8 +276,8 @@ var thisRound = function(cmd,oricmd){
     }//end big switch
   }//end big for
 
-  console.log('single1',single1);
-  console.log('single2',single2);
+  // console.log('single1',single1);
+  // console.log('single2',single2);
 
   //check if moves are successful
   var move_index1 = [];
@@ -316,7 +318,7 @@ var thisRound = function(cmd,oricmd){
       move1.push(false);
     }
   }
-  console.log('move1',move1);
+  // console.log('move1',move1);
 
   for(var i = 0; i < supermove_index1.length; i++){
     var tmpList = supermove_index1[i];
@@ -336,7 +338,7 @@ var thisRound = function(cmd,oricmd){
       supermove1.push(false);
     }
   }
-  console.log('supermove1',supermove1);
+  // console.log('supermove1',supermove1);
 
   //p2 move index
   cnt = 0; //reset cnt
@@ -372,7 +374,7 @@ var thisRound = function(cmd,oricmd){
       move2.push(false);
     }
   }
-  console.log('move2',move2);
+  // console.log('move2',move2);
 
   for(var i = 0; i < supermove_index2.length; i++){
     var tmpList = supermove_index2[i];
@@ -392,12 +394,12 @@ var thisRound = function(cmd,oricmd){
       supermove2.push(false);
     }
   }
-  console.log('supermove2',supermove2);
+  // console.log('supermove2',supermove2);
 
-  console.log('move_index1',move_index1);
-  console.log('supermove_index1',supermove_index1);
+  // console.log('move_index1',move_index1);
+  // console.log('supermove_index1',supermove_index1);
 
-  return {
+  var res = {
     'user1':user1,
     'user2':user2,
     'single1':single1,
@@ -407,6 +409,8 @@ var thisRound = function(cmd,oricmd){
     'supermove1':supermove1,
     'supermove2':supermove2
   };
+  console.dir(res);
+  return res;
 
 }//end thisRound
 
@@ -416,6 +420,8 @@ var getUserColor = function(str){
 	var index = djb2Code(str) % len;
 	return colors[index];
 }
+
+
 
 io.on('connection', function(socket){
   socket.on('disconnect',function(){
@@ -451,8 +457,9 @@ io.on('connection', function(socket){
   		msg = "----- Someone has joined the chat -----"
   	}	
   	io.emit('enter room',msg)
-    var notice = "<p>Welcome to pokemon fight game!</p><p>press <b>#</b> to select a pokemon.</p><p>Enter <b>?</b> to view the battle instructions.</p><p>Press <b>~</b> to view your pokemon infomation at any time.</p><p>Have fun!</p>";
+    var notice = "<p>Welcome to pokemon fight game!</p><p>Enter <b>#</b> to select a pokemon.</p><p>Enter <b>?</b> to view the battle instructions.</p><p>Enter <b>~</b> to view your pokemon infomation at any time.</p><p>Have fun!</p>";
     socket.emit('notice',notice);
+
   });
 
   socket.on('chat message', function(msg){
@@ -518,7 +525,7 @@ io.on('connection', function(socket){
             vs[socket.id] = Object.assign({},userPokemons[socket.id]);
             var msg = "System Message: Battle Begins!";
             socket.emit('notice',msg);
-            console.log(socket.id);
+            console.dir(vs);
             io.emit('begin',vs);
             var msg = "Please enter your battle commands ...";
             io.emit('notice',msg);
@@ -560,6 +567,66 @@ io.on('connection', function(socket){
 
             // console.log(playerCmds);
             // console.log(playerOriCmds);
+            if(isAI && userPokemons[AI.id] != undefined){
+              var AI_Oricommands = "";
+              var AI_commands = "";
+              if(userPokemons[AI.id].mp >= userPokemons[AI.id].supermoves.energyCost){
+                AI_Oricommands = '22';
+                AI_commands = userPokemons[AI.id].supermove_command + userPokemons[AI.id].supermove_command;
+              }else{
+                var rand1 = Math.floor(Math.random()*4);
+                
+                var rsp = ['r','s','p'];
+                switch(rand1){
+                  case 0:
+                    var rand2 = Math.floor(Math.random()*3);
+                    var rand3 = Math.floor(Math.random()*3);
+                    var c1 = rsp[rand2];
+                    var c2 = rsp[rand3];
+                    AI_Oricommands = c1 +'1'+c2+'1';
+                    AI_commands = c1 + userPokemons[AI.id].move_command + c2 + userPokemons[AI.id].move_command;
+                  break;
+                  case 1:
+                    var rand2 = Math.floor(Math.random()*3);
+                    var rand3 = Math.floor(Math.random()*3);
+                    var c1 = rsp[rand2];
+                    var c2 = rsp[rand3];
+                    AI_Oricommands = c1 + c2 +'11';
+                    AI_commands = c1 + c2 + userPokemons[AI.id].move_command + userPokemons[AI.id].move_command;
+                    break;
+                  case 2:
+                    var rand2 = Math.floor(Math.random()*3);
+                    var rand3 = Math.floor(Math.random()*3);
+                    var c1 = rsp[rand2];
+                    var c2 = rsp[rand3];
+                    AI_Oricommands = '1'+c1 + c2 +'1';
+                    AI_commands = userPokemons[AI.id].move_command + c1 + c2 + userPokemons[AI.id].move_command;
+                    break;
+                  case 3:
+                    var rand2 = Math.floor(Math.random()*3);
+                    var rand3 = Math.floor(Math.random()*3);
+                    var c1 = rsp[rand2];
+                    var c2 = rsp[rand3];
+                    AI_Oricommands = '11' + c1 + c2;
+                    AI_commands = userPokemons[AI.id].move_command + userPokemons[AI.id].move_command + c1 + c2;
+                    break;
+                  default:
+                    AI_Oricommands = '111';
+                    AI_commands = userPokemons[AI.id].move_command + userPokemons[AI.id].move_command + userPokemons[AI.id].move_command;
+                    break;
+                }//end switch
+              }
+              console.log('user',socket.id);
+              console.log('ai',AI.id);
+              playerCmds[AI.id] = AI_commands;
+              playerOriCmds[AI.id] = AI_Oricommands;
+              console.dir(playerCmds);
+              console.dir(playerOriCmds);
+              var msg = 'AI has entered his commands...';
+              socket.emit('notice',msg);
+              
+
+            }
 
             var len = Object.keys(playerCmds).length;
             if(len >=2){
@@ -610,7 +677,7 @@ io.on('connection', function(socket){
               var user2 = round_res.user2;
               var res = {
                 user1:{
-                  username:nicknames[user1],
+                  username:userPokemons[user1].username,
                   index:i,
                   hp:displayHP(user1),
                   mp:displayMP(user1),
@@ -620,7 +687,7 @@ io.on('connection', function(socket){
                   current:playerCmds[round_res.user1][i-1]
                 },
                 user2:{
-                  username:nicknames[user2],
+                  username:userPokemons[user2].username,
                   index:i,
                   hp:displayHP(user2),
                   mp:displayMP(user2),
@@ -662,7 +729,7 @@ io.on('connection', function(socket){
                   user1:{
                     hp:displayHP(user1),
                     mp:displayMP(user1),
-                    username:nicknames[user1],
+                    username:userPokemons[user1].username,
                     attacker:true,
                     damage:damage,
                     message:msg,
@@ -673,12 +740,12 @@ io.on('connection', function(socket){
                     hp:displayHP(user2),
                     mp:displayMP(user2),
                     attacker:false,
-                    username:nicknames[user2],
+                    username:userPokemons[user2].username,
                     pokemon:userPokemons[user2],
                   }
                 }
-                console.log('move1');
-                console.dir(res);
+                // console.log('move1');
+                // console.dir(res);
                 io.emit("move1_res",res);
                 setTimeout(showMoveRes1, 1000);
               }
@@ -710,7 +777,7 @@ io.on('connection', function(socket){
                     hp:displayHP(user1),
                     mp:displayMP(user1),
                     attacker:false,
-                    username:nicknames[user1],
+                    username:userPokemons[user1].username,
                     pokemon:userPokemons[user1],
                   },
                   user2:{
@@ -718,14 +785,14 @@ io.on('connection', function(socket){
                     mp:displayMP(user2),
                     attacker:true,
                     damage:damage,
-                    username:nicknames[user2],
+                    username:userPokemons[user2].username,
                     message:msg,
                     pokemon:userPokemons[user2],
                     status:round_res.move2[j2-1],
                   }
                 }
-                console.log('move2');
-                console.dir(res);
+                // console.log('move2');
+                // console.dir(res);
                 io.emit("move2_res",res);
                 setTimeout(showMoveRes2, 1000);
               }
@@ -769,7 +836,7 @@ io.on('connection', function(socket){
                     mp:displayMP(user1),
                     attacker:true,
                     damage:damage,
-                    username:nicknames[user1],
+                    username:userPokemons[user1].username,
                     message:msg,
                     pokemon:userPokemons[user1],
                     status:round_res.supermove1[k1-1],
@@ -778,7 +845,7 @@ io.on('connection', function(socket){
                     hp:displayHP(user2),
                     mp:displayMP(user2),
                     attacker:false,
-                    username:nicknames[user2],
+                    username:userPokemons[user2].username,
                     pokemon:userPokemons[user2],
                   }
                 }
@@ -796,11 +863,11 @@ io.on('connection', function(socket){
                     io.emit('notice',notice);
                   }else{
                     var winner = battleWinner(round_res.user1,round_res.user2);
-                    var notice = "<span class = 'glyphicon glyphicon-queen gold'></span> Battle ends! The winner is <b>"+nicknames[winner]+'</b>';
+                    var notice = "<span class = 'glyphicon glyphicon-queen gold'></span> Battle ends! The winner is <b>"+userPokemons[winner].username+'</b>';
                     io.emit('notice',notice);
                     userPokemons = {};
                     vs = {};
-                    var notice = "enter # to prepare for another battle!";
+                    var notice = "Enter # to prepare for another battle!";
                     io.emit('notice',notice);
                   }
                   
@@ -828,7 +895,7 @@ io.on('connection', function(socket){
                     hp:displayHP(user1),
                     mp:displayMP(user1),
                     attacker:false,
-                    username:nicknames[user1],
+                    username:userPokemons[user1].username,
                     pokemon:userPokemons[user1],
                   },
                   user2:{
@@ -836,7 +903,7 @@ io.on('connection', function(socket){
                     mp:displayMP(user2),
                     attacker:true,
                     damage:damage,
-                    username:nicknames[user2],
+                    username:userPokemons[user2].username,
                     message:msg,
                     pokemon:userPokemons[user2],
                     status:round_res.supermove2[k2-1],
@@ -858,7 +925,7 @@ io.on('connection', function(socket){
         break;
       case '?':
         //answer questions about rsp
-        var msg = "<p><b>Battle Helper:</b></p><p>r-rock, s-scissors, p-paper.</p><p>You should input a length-6 sequence after '@'.</p><p>For example, @rsrrpp </p><p>If your move command is 'rs' and your supermove command is 'rsp', you can input '@12s' which equals '@rsrsps'.</p><p>You can also input '@1ss1' which equals '@rsssrs'.</p><p>You can press <b>~</b> to view your pokemon infomation at any times.</p>";
+        var msg = "<p><b>Battle Helper:</b></p><p>r-rock, s-scissors, p-paper.</p><p>You should input a length-6 sequence after '@'.</p><p>For example, @rsrrpp </p><p>If your move command is 'rs' and your supermove command is 'rsp', you can input '@12s' which equals '@rsrsps'.</p><p>You can also input '@1ss1' which equals '@rsssrs'.</p><p>You can enter <b>~</b> to view your pokemon infomation at any times.</p>";
         socket.emit('notice',msg);
         break;
       case '~':
@@ -866,9 +933,61 @@ io.on('connection', function(socket){
           var res = userPokemons[socket.id]
           socket.emit('info',res);
         }else{
-          var notice = 'You have not selected a pokemon yet! To do that,press #';
+          var notice = 'You have not selected a pokemon yet! To do that,enter #';
           socket.emit('notice',notice);
         }
+        break;
+      case '+':
+        isAI = true;
+        var notice = 'AI is added to the battle.';
+        socket.emit('notice',notice);
+        // AI join battle
+        var AI_candidates = [3,6,9,31,34,59,62,65,68,71,76,94,103,107,110,112,123,127,128,130,131,141,143,144,145,146,149,150,151];
+        var index = Math.floor(Math.random()*AI_candidates.length);
+        var data = pokemons[AI_candidates[index]];
+        var len1 = data.moves.length;
+        var len2 = data.supermoves.length;
+        var rand1 = Math.floor(Math.random()*len1);
+        var rand2 = Math.floor(Math.random()*len2);
+        var move_command = "";
+        var supermove_command = "";
+        //generate move list in rsp
+        var rsp = ['r','s','p'];
+        for(var i = 0; i < 5; i++){
+          var r = Math.floor(Math.random()*3);
+          if(i < 2){ //move
+            move_command += rsp[r];
+          }else{ //supermove
+            supermove_command += rsp[r];
+          }
+        }
+        var res = Object.assign({},
+                                data,
+                                {mp:100},
+                                {key:AI_candidates[index]},
+                                {username:'*AI*'},
+                                {moves:data.moves[rand1]},
+                                {supermoves:data.supermoves[rand2]},
+                                {move_command:move_command},
+                                {supermove_command:supermove_command}
+                                );
+        //set AI pokemon
+        userPokemons[AI.id] = res;
+
+        //add AI to vs
+        vs[AI.id] = Object.assign({},userPokemons[AI.id]);
+
+        break;
+      case '-':
+        userPokemons = {};
+        vs = {};
+        playerCmds = {};
+        playerOriCmds = {};
+        isAI = false;
+
+        var notice = 'AI is removed from the battle queue. You can play with a real player.';
+        socket.emit('notice',notice);
+
         break;
       default: //normal chat
         var title = nicknames[socket.id];
@@ -896,6 +1015,7 @@ io.on('connection', function(socket){
   	socket.emit('online',{list:list,nums:Object.keys(nicknames).length});
   })
 });
+
 
 http.listen(3000, function(){
   console.log('listening on port:3000');
