@@ -406,6 +406,8 @@ var thisRound = function(cmd,oricmd){
     'single2':single2,
     'move1':move1,
     'move2':move2,
+    'cmd1':cmd1,
+    'cmd2':cmd2,
     'supermove1':supermove1,
     'supermove2':supermove2
   };
@@ -457,7 +459,7 @@ io.on('connection', function(socket){
   		msg = "----- Someone has joined the chat -----"
   	}	
   	io.emit('enter room',msg)
-    var notice = "<p>Welcome to pokemon fight game!</p><p>Enter <b>#</b> to select a pokemon.</p><p>Enter <b>?</b> to view the battle instructions.</p><p>Enter <b>~</b> to view your pokemon infomation at any time.</p><p>Have fun!</p>";
+    var notice = "<p>Welcome to pokemon fight game!</p><p>Enter <b>#</b> to select a pokemon.</p><p>Enter <b>?</b> to view the battle instructions.</p><p>Enter <b>~</b> to view your pokemon infomation at any time.</p><p>Enter <b>+</b> to add AI.</p><p>Enter <b>-</b> to remove AI.</p><p>Have fun!</p>";
     socket.emit('notice',notice);
 
   });
@@ -684,7 +686,7 @@ io.on('connection', function(socket){
                   message:msg,
                   pokemon:userPokemons[user1],
                   status:round_res.single1[i-1],
-                  current:playerCmds[round_res.user1][i-1]
+                  current:round_res.cmd1[i-1]
                 },
                 user2:{
                   username:userPokemons[user2].username,
@@ -694,7 +696,7 @@ io.on('connection', function(socket){
                   message:msg,
                   pokemon:userPokemons[user2],
                   status:round_res.single2[i-1],
-                  current:playerCmds[round_res.user2][i-1]
+                  current:round_res.cmd2[i-1]
                 }
               }
               io.emit("single_res",res);
