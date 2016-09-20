@@ -37,12 +37,17 @@ This is the advanced pratice of socket.io. I plan to make a pvp and pve interati
 - [x] before-battle preparation  
 
 ### To do list
-- [ ] add hitpoints to each pokemon
-- [ ] hitpoint/energy display
-- [ ] add types to each moves and supermoves
-- [ ] design game engine of rock-scissor-paper
-- [ ] design UI of battle field
-- [ ] animations and effects  
+- [x] add hitpoints to each pokemon
+- [x] hitpoint/energy display
+- [x] design game engine of rock-scissor-paper
+- [x] damage and magic consumption calculation
+- [x] design UI of battle field
+- [x] animations and effects
+- [x] design an AI for battle
+- [ ] make it live
 
 ### screenshots
+ready scene
 ![alt tag](https://raw.githubusercontent.com/xinyzhang9/socket_io/master/pokefight/poke_fight.png)
+play with AI
+![alt tag](https://raw.githubusercontent.com/xinyzhang9/socket_io/master/pokefight/ai.png)
