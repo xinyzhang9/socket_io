@@ -803,7 +803,7 @@ io.on('connection', function(socket){
                 if(++k1 >= round_res.supermove1.length+1){
                   if(!battleOn(round_res.user1,round_res.user2)){
                     var winner = battleWinner(round_res.user1,round_res.user2);
-                    var notice = "<span class = 'glyphicon glyphicon-queen gold'></span> Battle ends! The winner is <b>"+nicknames[winner]+'</b>';
+                    var notice = "<span class = 'glyphicon glyphicon-queen gold'></span> Battle ends! The winner is <b>"+userPokemons[winner].username+'</b>';
                     io.emit('notice',notice);
                     userPokemons = {};
                     vs = {};
