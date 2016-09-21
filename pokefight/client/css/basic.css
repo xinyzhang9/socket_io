@@ -162,7 +162,15 @@
     padding:2px;
   }
   .evolution{
-    background: orange;
+    background: purple;
+    color: white;
+    font-size: 16px;
+    padding: 2px;
+    border-radius: 10px;
+    margin-right: 10px;
+  }
+  .confirm{
+    background: green;
     color: white;
     font-size: 16px;
     padding: 2px;

@@ -2,11 +2,12 @@ $('#hide').hide();
 var nickname = prompt('Enter your name: ');
 var userImg = "";
 var currentPokemon; //store information of candidate
-if (nickname == "xinyang" || nickname == 'zxy' || nickname == '阳哥'){
-  userImg = "img/xiaozhi.gif";
-}else{
-  userImg = "img/joan.jpg";
-}
+// if (nickname == "xinyang" || nickname == 'zxy' || nickname == '阳哥'){
+//   userImg = "img/xiaozhi.gif";
+// }else{
+//   userImg = "img/joan.jpg";
+// }
+userImg = "img/xiaozhi.gif";
 
 var socket = io();
 
@@ -16,6 +17,10 @@ function scrollToBottom () {
 
 function evolve(){
   socket.emit('evolution');
+}
+
+function confirm(){
+  socket.emit('confirm');
 }
 
 socket.emit('enter room',{name: nickname,img:userImg});
@@ -78,8 +83,7 @@ socket.on('info',function(res){
                                         +'<span class = "hp">HP</span> '+res.hitpoints.toString()+' <span class = "att">ATT</span> '+res.attack.toString() + ' <span class = "def">DEF</span> '+res.defense.toString() +'</div>'));
   $('#messages').append($('<li>').html('<b>Move:</b> '+res.moves.name+ ' | <b>Damage:</b> '+res.moves.damage + ' | <b>Power Gain:</b> '+res.moves.energyInc + ' | <b>Command:</b> '+res.move_command));
   $('#messages').append($('<li>').html('<b>Supermove:</b> '+res.supermoves.name+ ' | <b>Damage:</b> '+res.supermoves.damage + ' | <b>Power Cost:</b> '+res.supermoves.energyCost * 100 + ' | <b>Command:</b> '+res.supermove_command));
-  $('#messages').append($('<li class = "green">').html("<button class = 'evolution' onclick = 'evolve()'>evolve</button>"));
-  $('#messages').append($('<li class = "green">').text("input ! to confirm this pokemon."));
+  $('#messages').append($('<li>').html("<button class = 'evolution' onclick = 'evolve()'>evolve</button><button class = 'confirm' onclick = 'confirm()'>confirm</button>"));
   $('#messages').append($('<li class = "green">').text("input # to continue switching pokemons."));
   scrollToBottom();
 });

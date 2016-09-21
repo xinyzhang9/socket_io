@@ -504,7 +504,6 @@ io.on('connection', function(socket){
           //set user pokemon
           userPokemons[socket.id] = res;
           socket.emit('info',res);
-
         }
       }else{
         var error = 'no evolution available';
@@ -512,7 +511,27 @@ io.on('connection', function(socket){
       }
     }
   });
-
+  
+  socket.on('confirm',function(){
+    var len = Object.keys(vs).length;
+    if(len >= 2){
+      var msg = "System Message: Unable to join the battle. Queue is full.";
+      socket.emit('notice',msg);
+    }else if (len == 0){
+      vs[socket.id] = Object.assign({},userPokemons[socket.id]);
+      var msg = "System Message: Waiting for the opponent ...";
+      socket.emit('notice',msg);
+    }else{
+      //begin fight
+      vs[socket.id] = Object.assign({},userPokemons[socket.id]);
+      var msg = "System Message: Battle Begins!";
+      socket.emit('notice',msg);
+      console.dir(vs);
+      io.emit('begin',vs);
+      var msg = "Please enter your battle commands ...";
+      io.emit('notice',msg);
+    }
+})
   
 
   socket.on('chat message', function(msg){
