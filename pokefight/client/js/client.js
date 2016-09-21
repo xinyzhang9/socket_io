@@ -14,6 +14,10 @@ function scrollToBottom () {
     window.scrollTo(0,document.body.scrollHeight);
 };
 
+function evolve(){
+  socket.emit('evolution');
+}
+
 socket.emit('enter room',{name: nickname,img:userImg});
 $('form').submit(function(){
   var msg = $('#m').val();
@@ -37,6 +41,7 @@ $('#hide').click(function(){
   $('#hide').hide();
   $('#check_online').show();
 });
+
 socket.on('chat message',function(data){
   $('#status').html('&nbsp;');
   $('#messages').append($('<li class = '+data.color +'>').html('<div class = "msg"><img src ='+ data.img+'></br>'+data.title+'</div>' + '&nbsp;' + '<div class = "msg">'+data.msg+'</div>'));
@@ -73,6 +78,7 @@ socket.on('info',function(res){
                                         +'<span class = "hp">HP</span> '+res.hitpoints.toString()+' <span class = "att">ATT</span> '+res.attack.toString() + ' <span class = "def">DEF</span> '+res.defense.toString() +'</div>'));
   $('#messages').append($('<li>').html('<b>Move:</b> '+res.moves.name+ ' | <b>Damage:</b> '+res.moves.damage + ' | <b>Power Gain:</b> '+res.moves.energyInc + ' | <b>Command:</b> '+res.move_command));
   $('#messages').append($('<li>').html('<b>Supermove:</b> '+res.supermoves.name+ ' | <b>Damage:</b> '+res.supermoves.damage + ' | <b>Power Cost:</b> '+res.supermoves.energyCost * 100 + ' | <b>Command:</b> '+res.supermove_command));
+  $('#messages').append($('<li class = "green">').html("<button class = 'evolution' onclick = 'evolve()'>evolve</button>"));
   $('#messages').append($('<li class = "green">').text("input ! to confirm this pokemon."));
   $('#messages').append($('<li class = "green">').text("input # to continue switching pokemons."));
   scrollToBottom();

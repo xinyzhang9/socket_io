@@ -464,6 +464,57 @@ io.on('connection', function(socket){
 
   });
 
+  socket.on('evolution',function(){
+    if(userPokemons[socket.id] != undefined){
+      var key = parseInt(userPokemons[socket.id].key);
+      if(userPokemons[socket.id].evolveTo != undefined){
+        var newKey = (key+1).toString();
+        var data = pokemons[newKey];
+        if(data === undefined){
+          var error = "error: no results found.";
+          socket.emit('notice',error);
+        }else{
+          var len1 = data.moves.length;
+          var len2 = data.supermoves.length;
+          var rand1 = Math.floor(Math.random()*len1);
+          var rand2 = Math.floor(Math.random()*len2);
+          var move_command = "";
+          var supermove_command = "";
+          //generate move list in rsp
+          var rsp = ['r','s','p'];
+          for(var i = 0; i < 5; i++){
+            var r = Math.floor(Math.random()*3);
+            if(i < 2){ //move
+              move_command += rsp[r];
+            }else{ //supermove
+              supermove_command += rsp[r];
+            }
+          }
+          var res = Object.assign({},
+                                  data,
+                                  {mp:100},
+                                  {key:newKey},
+                                  {username:nicknames[socket.id]},
+                                  {usercolor:userColors[socket.id]},
+                                  {moves:data.moves[rand1]},
+                                  {supermoves:data.supermoves[rand2]},
+                                  {move_command:move_command},
+                                  {supermove_command:supermove_command}
+                                  );
+          //set user pokemon
+          userPokemons[socket.id] = res;
+          socket.emit('info',res);
+
+        }
+      }else{
+        var error = 'no evolution available';
+        socket.emit('notice',error);
+      }
+    }
+  });
+
+  
+
   socket.on('chat message', function(msg){
     var op = msg.slice(0,1);
     switch(op){
