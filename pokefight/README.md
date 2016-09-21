@@ -28,7 +28,7 @@ open your browser at localhost:3000
 #### All commands should be entered via the message box .  
 '?': view battle instructions  
 '#': select a pokemon randomly  
-'!': confirm pokemon selection  (depreciated but still functional)
+'!': confirm pokemon selection (depreciated but still functional)  
 '~': view your pokemon information at any time  
 '+': add AI to the battle  
 '-': remove AI and reset the battle
