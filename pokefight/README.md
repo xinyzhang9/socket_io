@@ -42,6 +42,6 @@ You can also input '@1ss1' which equals '@rsssrs'.
 
 ## screenshots
 #### ready scene
-![alt tag](https://raw.githubusercontent.com/xinyzhang9/socket_io/master/pokefight/poke_fight.png)
+![alt tag](https://raw.githubusercontent.com/xinyzhang9/socket_io/master/pokefight/ready.png)
 #### play with AI
 ![alt tag](https://raw.githubusercontent.com/xinyzhang9/socket_io/master/pokefight/ai.png)
