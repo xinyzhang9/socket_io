@@ -528,7 +528,7 @@ io.on('connection', function(socket){
       socket.emit('notice',msg);
       console.dir(vs);
       io.emit('begin',vs);
-      var msg = "Please enter your battle commands ...";
+      var msg = "Please enter your battle commands ...(enter ? to see instructions)";
       io.emit('notice',msg);
     }
 })
@@ -599,7 +599,7 @@ io.on('connection', function(socket){
             socket.emit('notice',msg);
             console.dir(vs);
             io.emit('begin',vs);
-            var msg = "Please enter your battle commands ...";
+            var msg = "Please enter your battle commands ...(enter ? to see instructions)";
             io.emit('notice',msg);
           }
         }
@@ -997,7 +997,7 @@ io.on('connection', function(socket){
         break;
       case '?':
         //answer questions about rsp
-        var msg = "<p><b>Battle Helper:</b></p><p>r-rock, s-scissors, p-paper.</p><p>You should input a length-6 sequence after '@'.</p><p>For example, @rsrrpp </p><p>If your move command is 'rs' and your supermove command is 'rsp', you can input '@12s' which equals '@rsrsps'.</p><p>You can also input '@1ss1' which equals '@rsssrs'.</p><p>You can enter <b>~</b> to view your pokemon infomation at any times.</p>";
+        var msg = "<p><b>Battle Helper:</b></p><p>r-rock, s-scissors, p-paper.</p><p>You should input a length-6 sequence after '@'.</p><p>For example, @rsrrpp </p><p>If your move command is 'rs' and your supermove command is 'rsp', you can input '@12s' which equals '@rsrsps'.</p><p>You can also input '@1ss1' which equals '@rsssrs'.</p><p>You can enter <b>~</b> to view your pokemon infomation at any times.</p><p>You can enter <b>-</b> to reset game at any time.</p>";
         socket.emit('notice',msg);
         break;
       case '~':
@@ -1011,7 +1011,7 @@ io.on('connection', function(socket){
         break;
       case '+':
         isAI = true;
-        var notice = 'AI is added to the battle.';
+        var notice = 'System Message: AI is added to the battle.';
         socket.emit('notice',notice);
         // AI join battle
         var AI_candidates = [3,6,9,31,34,59,62,65,68,71,76,94,103,107,110,112,123,127,128,130,131,141,143,144,145,146,149,150,151];
@@ -1046,8 +1046,28 @@ io.on('connection', function(socket){
         //set AI pokemon
         userPokemons[AI.id] = res;
 
-        //add AI to vs
-        vs[AI.id] = Object.assign({},userPokemons[AI.id]);
+        // //add AI to vs
+        // vs[AI.id] = Object.assign({},userPokemons[AI.id]);
+
+        var len = Object.keys(vs).length;
+          if(len >= 2){
+            var msg = "System Message: Unable to join the battle. Queue is full.";
+            socket.emit('notice',msg);
+          }else if (len == 0){
+            //add AI to vs
+            vs[AI.id] = Object.assign({},userPokemons[AI.id]);
+            var msg = "System Message: AI is ready ...";
+            socket.emit('notice',msg);
+          }else{
+            //begin fight
+            vs[AI.id] = Object.assign({},userPokemons[AI.id]);
+            var msg = "System Message: Battle Begins!";
+            socket.emit('notice',msg);
+            console.dir(vs);
+            io.emit('begin',vs);
+            var msg = "Please enter your battle commands ...(enter ? to see instructions)";
+            io.emit('notice',msg);
+          }
 
         break;
       case '-':
