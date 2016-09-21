@@ -459,7 +459,7 @@ io.on('connection', function(socket){
   		msg = "----- Someone has joined the chat -----"
   	}	
   	io.emit('enter room',msg)
-    var notice = "<p>Welcome to pokemon fight game!</p><p>Enter <b>#</b> to select a pokemon.</p><p>Enter <b>?</b> to view the battle instructions.</p><p>Enter <b>~</b> to view your pokemon infomation at any time.</p><p>Enter <b>+</b> to add AI.</p><p>Enter <b>-</b> to remove AI.</p><p>Have fun!</p>";
+    var notice = "<p>Welcome to pokemon fight game!</p><p>Enter <b>#</b> to select a pokemon.</p><p>Enter <b>?</b> to view the battle instructions.</p><p>Enter <b>~</b> to view your pokemon infomation at any time.</p><p>Enter <b>+</b> to add AI.</p><p>Enter <b>-</b> to remove AI and reset game.</p><p>Have fun!</p>";
     socket.emit('notice',notice);
 
   });
