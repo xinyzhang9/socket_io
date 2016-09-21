@@ -1,5 +1,5 @@
-# pokemon fight game
-This is the advanced pratice of socket.io. User can have a pvp or pve battle via the pokemons. The game engine is the game theory of rock-scissor-paper. The pokemon can release supermoves if its moves are not overtaken by the opponents for certain rounds.  
+# pokemon fighting game
+This is the round based fighting game realized via socket.io. User can have a pvp or pve battle via the pokemons. The game engine is the game theory of rock-scissor-paper. The pokemon can release supermoves if its moves are not overtaken by the opponents for certain rounds.  
 ## basic features
 - [x] user chat channel
 - [x] generate random pokemon candidates
