@@ -45,6 +45,7 @@ This is the round based fighting game realized via socket.io. User can have a pv
 - [x] optimized UI for battle field
 - [x] animations and effects
 - [x] design an AI for battle
+- [x] add evolution option
 
 ### get it run locally
 ```
@@ -58,7 +59,7 @@ open your browser at localhost:3000
 #### All commands should be entered via the message box .  
 '?': view battle instructions  
 '#': select a pokemon randomly  
-'!': confirm pokemon selection  
+'!': confirm pokemon selection (depreciated but still functional)
 '~': view your pokemon information at any time  
 '+': add AI to the battle  
 '-': remove AI and reset the battle
