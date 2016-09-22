@@ -491,7 +491,7 @@ io.on('connection', function(socket){
   		msg = "----- Someone has joined the chat -----"
   	}	
   	io.emit('enter room',msg)
-    var notice = "<p>Welcome to pokemon fight game!</p><p>Enter <b>#</b> to select a pokemon.</p><p>Enter <b>?</b> to view the battle instructions.</p><p>Enter <b>~</b> to view your pokemon infomation at any time.</p><p>Enter <b>+</b> to add AI.</p><p>Enter <b>-</b> to remove AI and reset game.</p><p>Have fun!</p>";
+    var notice = "<p>Welcome to pokemon fight game!</p><p>Enter <b>#</b> to select a pokemon.</p><p>Enter <b>?</b> to view the battle instructions.</p><p>Enter <b>~</b> to view your pokemon infomation at any time.</p><p>Enter <b>+</b> to add AI.</p><p>Enter <b>-</b> to reset game status.</p><p>Have fun!</p>";
     socket.emit('notice',notice);
 
   });
@@ -609,7 +609,7 @@ io.on('connection', function(socket){
     switch(op){
       case '#': // pokemon info
         if(userStatus[socket.id] != undefined){
-          var msg = 'You cannot change your pokemon after confirmation. To reset, enter <b>-</b>';
+          var msg = 'You cannot change your pokemon at this moment. To reset game status, enter <b>-</b>';
           socket.emit('notice',msg);
           break;
         }
@@ -1063,7 +1063,7 @@ io.on('connection', function(socket){
         break;
       case '?':
         //answer questions about rsp
-        var msg = "<p><b>Battle Helper:</b></p><p>r-rock, s-scissors, p-paper.</p><p>You should input a length-6 sequence after '@'.</p><p>For example, @rsrrpp </p><p>If your move command is 'rs' and your supermove command is 'rsp', you can input '@12s' which equals '@rsrsps'.</p><p>You can also input '@1ss1' which equals '@rsssrs'.</p><p>You can enter <b>~</b> to view your pokemon infomation at any times.</p><p>You can enter <b>-</b> to reset game at any time.</p>";
+        var msg = "<p><b>Battle Helper:</b></p><p>r-rock, s-scissors, p-paper.</p><p>You should input a length-6 sequence after '@'.</p><p>For example, @rsrrpp </p><p>If your move command is 'rs' and your supermove command is 'rsp', you can input '@12s' which equals '@rsrsps'.</p><p>You can also input '@1ss1' which equals '@rsssrs'.</p><p>You can enter <b>~</b> to view your pokemon infomation at any times.</p><p>You can enter <b>-</b> to reset game status.</p>";
         socket.emit('notice',msg);
         break;
       case '~':
