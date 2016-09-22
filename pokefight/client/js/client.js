@@ -102,7 +102,6 @@ socket.on('begin',function(res){
       opponentPokemonImg = 'img/pokemons/'+res[key].key + '.png';
     }
   }
-  $('#messages').append($('<li>').html('<div class = "dleft skyblue">my info</div>'+'<div class = "dright maroon"> opponent info</div>'));
   $('#messages').append($('<li>').html('<div class = "msg"><img src = '+selfPokemonImg+'></br><b>'
                                         +self.name+'</b></br><span class = '+self.type+'>'+self.type+'</span></br>'
                                         +'<span class = "hp">HP</span> '+self.hitpoints.toString()+' <span class = "att">ATT</span> '+self.attack.toString() + ' <span class = "def">DEF</span> '+self.defense.toString() +'</div>'

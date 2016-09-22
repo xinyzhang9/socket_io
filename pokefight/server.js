@@ -450,24 +450,24 @@ io.on('connection', function(socket){
         }else if(room.status == 'full'){ //room contains two players
           var playerIndex = room.players.indexOf(socket.id);
           room.players.splice(playerIndex,1); //delete user from playerlist
-          room.status = 'waiting';
-          room.ownner = room.players[0]; //transfer ownnership to another user
-          userStatus[room.ownner] = Object.assign(userStatus[room.ownner],{status:'home'}); //change home ownner's userStatus
-          delete room.playerCmds[socket.id];
-          delete room.playerOriCmds[socket.id]; //delete user commands
-          delete room.pokemons[socket.id]; //delete room's pokemon
-        }
-        
+          if(room.players[0] == AI.id){
+            delete vs[userStatus[socket.id].roomId];
+          }else{
+            room.status = 'waiting';
+            room.ownner = room.players[0]; //transfer ownnership to another user
+            userStatus[room.ownner] = Object.assign(userStatus[room.ownner],{status:'home'}); //change home ownner's userStatus
+          }
+        }        
       }else if(userStatus[socket.id].status == 'guest'){ //user is room guest
         var room = vs[userStatus[socket.id].roomId];
         //this room must have 2 players! otherwise the user status is 'home'
         var playerIndex = room.players.indexOf(socket.id);
         room.players.splice(playerIndex,1);
         room.status = 'waiting';
-        delete room.playerCmds[socket.id];
-        delete room.playerOriCmds[socket.id]; //delete user commands
-        delete room.pokemons[socket.id]; //delete room's pokemon
       }
+      delete room.playerCmds[socket.id];
+      delete room.playerOriCmds[socket.id]; //delete user commands
+      delete room.pokemons[socket.id]; //delete room's pokemon
     }
 
     delete userStatus[socket.id]; //final step, delete his status
@@ -557,19 +557,10 @@ io.on('connection', function(socket){
                                     roomId:vs[room].id
                                   };
           vs[room].pokemons[socket.id] = userPokemons[socket.id];
-          //send msg to 2 users in this room
-          for(var i = 0; i < vs[room].players; i++){
-            var player = vs[room].players[i];
-            var msg = "System Message: Battle Begins!";
-            io.sockets.to(player).emit('notice',msg);
-            io.sockets.to(player).emit('begin',vs[room].pokemons);
-            var msg = "Please enter your battle commands ...(enter ? to see instructions)";
-            io.sockets.to(player).emit('notice',msg);
-          }
+    
           break;
         }
       }
-      console.dir(userStatus);
     }
     //otherwise, create new room
     if(userStatus[socket.id] == undefined){
@@ -593,10 +584,22 @@ io.on('connection', function(socket){
                                 status:"home",
                                 roomId:socket.id
                               };
-      var msg = "System Message: Waiting for the opponent ...";
+      var msg = "System Message: Searching for the opponent ...";
       socket.emit('notice',msg);
-
+    }else{
+      var room = vs[userStatus[socket.id].roomId];
+      //send msg to 2 users in this room
+      for(var i = 0; i < room.players.length; i++){
+        var player = room.players[i];
+        var msg = "System Message: Battle Begins!";
+        io.to(player).emit('notice',msg);
+        io.to(player).emit('begin',room.pokemons);
+        var msg = "Please enter your battle commands ...(enter ? to see instructions)";
+        io.to(player).emit('notice',msg);
+      }
     }
+
+
     console.dir(userStatus);
   });
   
@@ -605,6 +608,11 @@ io.on('connection', function(socket){
     var op = msg.slice(0,1);
     switch(op){
       case '#': // pokemon info
+        if(userStatus[socket.id] != undefined){
+          var msg = 'You cannot change your pokemon after confirmation. To reset, enter <b>-</b>';
+          socket.emit('notice',msg);
+          break;
+        }
         //random index for pokemon
         var post = msg.slice(1);
         var randomIndex = Math.floor(Math.random()*151)+1;
@@ -737,8 +745,6 @@ io.on('connection', function(socket){
                 console.log('ai',AI.id);
                 room.playerCmds[AI.id] = AI_commands;
                 room.playerOriCmds[AI.id] = AI_Oricommands;
-                console.dir(playerCmds);
-                console.dir(playerOriCmds);
                 var msg = 'AI has entered his commands...';
                 socket.emit('notice',msg);
                 
@@ -1070,7 +1076,18 @@ io.on('connection', function(socket){
         }
         break;
       case '+':
-        isAI = true;
+        if(userStatus[socket.id] == undefined){
+          var msg = 'You must confirm you pokemon first to enable an AI.';
+          socket.emit('notice',msg);
+          break;
+        }
+        var room = vs[userStatus[socket.id].roomId];
+        if(room.status === 'full'){
+          var msg = 'Fail to enable an AI. Your room is full.';
+          socket.emit('notice',msg);
+          break;
+        }
+        room.isAI = true;
         var notice = 'System Message: AI is added to the battle.';
         socket.emit('notice',notice);
         // AI join battle
@@ -1106,38 +1123,54 @@ io.on('connection', function(socket){
         //set AI pokemon
         userPokemons[AI.id] = res;
 
-        // //add AI to vs
-        // vs[AI.id] = Object.assign({},userPokemons[AI.id]);
+        room.players.push(AI.id); //push user to playerList
+        room.status = 'full';
+        // userStatus[AI.id] = {
+        //                       status:"guest",
+        //                       roomId:room.id
+        //                     };
+        room.pokemons[AI.id] = userPokemons[AI.id];
 
-        var len = Object.keys(vs).length;
-          if(len >= 2){
-            var msg = "System Message: Unable to join the battle. Queue is full.";
-            socket.emit('notice',msg);
-          }else if (len == 0){
-            //add AI to vs
-            vs[AI.id] = Object.assign({},userPokemons[AI.id]);
-            var msg = "System Message: AI is ready ...";
-            socket.emit('notice',msg);
-          }else{
-            //begin fight
-            vs[AI.id] = Object.assign({},userPokemons[AI.id]);
-            var msg = "System Message: Battle Begins!";
-            socket.emit('notice',msg);
-            console.dir(vs);
-            io.emit('begin',vs);
-            var msg = "Please enter your battle commands ...(enter ? to see instructions)";
-            io.emit('notice',msg);
-          }
+        var msg = "System Message: Battle Begins!";
+        socket.emit('notice',msg);
+        socket.emit('begin',room.pokemons);
+        var msg = "Please enter your battle commands ...(enter ? to see instructions)";
+        socket.emit('notice',msg);
 
         break;
       case '-':
-        userPokemons = {};
-        vs = {};
-        playerCmds = {};
-        playerOriCmds = {};
-        isAI = false;
+        if(userStatus[socket.id] != undefined){
+          if(userStatus[socket.id].status == 'home'){ //user is room owner
+            var room = vs[userStatus[socket.id].roomId];
+            if(room.status == 'waiting'){ //room only contains one player
+              delete vs[userStatus[socket.id].roomId];; //just delete this room
+            }else if(room.status == 'full'){ //room contains two players
+              var playerIndex = room.players.indexOf(socket.id);
+              room.players.splice(playerIndex,1); //delete user from playerlist
+              //if another player is AI, just delete this room
+              if(room.players[0] == AI.id){
+                delete vs[userStatus[socket.id].roomId];
+              }else{
+                room.status = 'waiting';
+                room.ownner = room.players[0]; //transfer ownnership to another user
+                userStatus[room.ownner] = Object.assign(userStatus[room.ownner],{status:'home'}); //change home ownner's userStatus
+              }
+            }
+            
+          }else if(userStatus[socket.id].status == 'guest'){ //user is room guest
+            var room = vs[userStatus[socket.id].roomId];
+            //this room must have 2 players! otherwise the user status is 'home'
+            var playerIndex = room.players.indexOf(socket.id);
+            room.players.splice(playerIndex,1);
+            room.status = 'waiting';
+          }
+          delete room.playerCmds[socket.id];
+          delete room.playerOriCmds[socket.id]; //delete user commands
+          delete room.pokemons[socket.id]; //delete room's pokemon
+        }
+        delete userStatus[socket.id];
 
-        var notice = 'AI is removed from the battle queue. You can play with a real player.';
+        var notice = 'Your game status is reset. You can enter enter <b>#</b> to choose another pokemon.';
         socket.emit('notice',notice);
 
         break;
