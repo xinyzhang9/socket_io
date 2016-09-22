@@ -62,7 +62,7 @@ open your browser at localhost:3000
 '#': select a pokemon randomly  
 '~': view your pokemon information at any time  
 '+': add AI to the battle  
-'-': remove AI and reset the battle
+'-': reset your game status
 
 #### battle commands
 'r' for rock, 's' for scissors, 'p' for paper.  
