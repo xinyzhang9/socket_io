@@ -21,14 +21,24 @@ var nicknames = {};
 var userImgs = {}
 var userColors = {};
 var userPokemons = {};
-var vs = {}; //1 vs 1
-//initialize commands object
-var playerCmds = {};
-var playerOriCmds = {};
+var vs = {}; //contains all battle rooms!!!
+var userStatus = {}; //record user status
 
-var isAI = false;
+//initialize commands object
+// var playerCmds = {};
+// var playerOriCmds = {};
+
+// var isAI = false;
 
 //utility functions
+function roomAnounce(roomid,msg,type){
+  var room = vs[roomid];
+  for(var i = 0; i < room.players.length; i++){
+    var player = room.players[i];
+    io.to(player).emit(type,msg);
+  }
+}
+
 function battleOn(user1,user2){
   var pokemon1 = userPokemons[user1];
   var pokemon2 = userPokemons[user2];
@@ -91,14 +101,6 @@ function displayMP(user){
   return res;
 }
 
-function sleep(milliseconds) {
-  var start = new Date().getTime();
-  for (var i = 0; i < 1e7; i++) {
-    if ((new Date().getTime() - start) > milliseconds){
-      break;
-    }
-  }
-}
 
 function calcDamage(source,target,type){
   var dmg = 0;
@@ -438,9 +440,39 @@ io.on('connection', function(socket){
   	delete userImgs[socket.id];
   	delete userColors[socket.id];
     delete userPokemons[socket.id];
-    delete vs[socket.id];
-    delete playerCmds[socket.id];
-    delete playerOriCmds[socket.id];
+
+    //find user's room
+    if(userStatus[socket.id] !== undefined){
+      if(userStatus[socket.id].status == 'home'){ //user is room owner
+        var room = vs[userStatus[socket.id].roomId];
+        if(room.status == 'waiting'){ //room only contains one player
+          delete vs[userStatus[socket.id].roomId];; //just delete this room
+        }else if(room.status == 'full'){ //room contains two players
+          var playerIndex = room.players.indexOf(socket.id);
+          room.players.splice(playerIndex,1); //delete user from playerlist
+          room.status = 'waiting';
+          room.ownner = room.players[0]; //transfer ownnership to another user
+          userStatus[room.ownner] = Object.assign(userStatus[room.ownner],{status:'home'}); //change home ownner's userStatus
+          delete room.playerCmds[socket.id];
+          delete room.playerOriCmds[socket.id]; //delete user commands
+          delete room.pokemons[socket.id]; //delete room's pokemon
+        }
+        
+      }else if(userStatus[socket.id].status == 'guest'){ //user is room guest
+        var room = vs[userStatus[socket.id].roomId];
+        //this room must have 2 players! otherwise the user status is 'home'
+        var playerIndex = room.players.indexOf(socket.id);
+        room.players.splice(playerIndex,1);
+        room.status = 'waiting';
+        delete room.playerCmds[socket.id];
+        delete room.playerOriCmds[socket.id]; //delete user commands
+        delete room.pokemons[socket.id]; //delete room's pokemon
+      }
+    }
+
+    delete userStatus[socket.id]; //final step, delete his status
+
+    console.dir(userStatus);
   	
   	io.emit('left room',msg);
   });
@@ -513,25 +545,60 @@ io.on('connection', function(socket){
   });
   
   socket.on('confirm',function(){
-    var len = Object.keys(vs).length;
-    if(len >= 2){
-      var msg = "System Message: Unable to join the battle. Queue is full.";
-      socket.emit('notice',msg);
-    }else if (len == 0){
-      vs[socket.id] = Object.assign({},userPokemons[socket.id]);
+    //first, try to join other available rooms
+    
+    if(userStatus[socket.id] == undefined){
+      for(var room in vs){
+        if(vs[room].status == 'waiting'){
+          vs[room].players.push(socket.id); //push user to playerList
+          vs[room].status = 'full';
+          userStatus[socket.id] = {
+                                    status:"guest",
+                                    roomId:vs[room].id
+                                  };
+          vs[room].pokemons[socket.id] = userPokemons[socket.id];
+          //send msg to 2 users in this room
+          for(var i = 0; i < vs[room].players; i++){
+            var player = vs[room].players[i];
+            var msg = "System Message: Battle Begins!";
+            io.sockets.to(player).emit('notice',msg);
+            io.sockets.to(player).emit('begin',vs[room].pokemons);
+            var msg = "Please enter your battle commands ...(enter ? to see instructions)";
+            io.sockets.to(player).emit('notice',msg);
+          }
+          break;
+        }
+      }
+      console.dir(userStatus);
+    }
+    //otherwise, create new room
+    if(userStatus[socket.id] == undefined){
+      var players = [];
+      players.push(socket.id);
+      var playerCmds = {};
+      var playerOriCmds = {};
+      var pokemons = {};
+      pokemons[socket.id] = userPokemons[socket.id];
+      vs[socket.id] = {
+        id: socket.id,
+        players: players,
+        status: 'waiting',
+        ownner: socket.id,
+        playerCmds: playerCmds,
+        playerOriCmds: playerOriCmds,
+        isAI: false,
+        pokemons: pokemons
+      };
+      userStatus[socket.id] = {
+                                status:"home",
+                                roomId:socket.id
+                              };
       var msg = "System Message: Waiting for the opponent ...";
       socket.emit('notice',msg);
-    }else{
-      //begin fight
-      vs[socket.id] = Object.assign({},userPokemons[socket.id]);
-      var msg = "System Message: Battle Begins!";
-      socket.emit('notice',msg);
-      console.dir(vs);
-      io.emit('begin',vs);
-      var msg = "Please enter your battle commands ...(enter ? to see instructions)";
-      io.emit('notice',msg);
+
     }
-})
+    console.dir(userStatus);
+  });
   
 
   socket.on('chat message', function(msg){
@@ -579,37 +646,11 @@ io.on('connection', function(socket){
           socket.emit('info',res);
         }
         break;
-      case '!': //confirm pokemon
-        if(!userPokemons[socket.id]){ //undefined
-          var msg = "System Message: You should input '#' first to choose a pokemon!";
-          socket.emit('notice',msg);
-        }else{
-          var len = Object.keys(vs).length;
-          if(len >= 2){
-            var msg = "System Message: Unable to join the battle. Queue is full.";
-            socket.emit('notice',msg);
-          }else if (len == 0){
-            vs[socket.id] = Object.assign({},userPokemons[socket.id]);
-            var msg = "System Message: Waiting for the opponent ...";
-            socket.emit('notice',msg);
-          }else{
-            //begin fight
-            vs[socket.id] = Object.assign({},userPokemons[socket.id]);
-            var msg = "System Message: Battle Begins!";
-            socket.emit('notice',msg);
-            console.dir(vs);
-            io.emit('begin',vs);
-            var msg = "Please enter your battle commands ...(enter ? to see instructions)";
-            io.emit('notice',msg);
-          }
-        }
-               
-        break;
       case '@':
         if(!userPokemons[socket.id]){ //undefined
           var msg = "System Message: You should input '#' first to choose a pokemon!";
           socket.emit('notice',msg);
-        }else{
+        }else{ //else##
           //handle rsp
           var commands = msg.slice(1);
           //translate commands into pprrss
@@ -630,91 +671,96 @@ io.on('connection', function(socket){
           if(!isCommandValid(str)){
             var msg = "Invalid command! Enter '?' for more details.";
             socket.emit('notice',msg);
-          }else{
-            var msg = "Your command is "+str;
-            socket.emit('notice',msg);
+          }else{ //big big program starts here!
+            if(userStatus[socket.id] == undefined){ //user has not confirm(ready to battle)
+              var error = 'You must confirm a pokemon selection first!';
+              socket.emit('notice',error);
+            }else{ //first, find user's room
+              var room = vs[userStatus[socket.id].roomId];
+              var roomid = room.id;
+              var msg = "Your command is "+str;
+              socket.emit('notice',msg);
+              room.playerCmds[socket.id] = str;
+              room.playerOriCmds[socket.id] = commands;
 
-            playerCmds[socket.id] = str;
-            playerOriCmds[socket.id] = commands;
-
-            // console.log(playerCmds);
-            // console.log(playerOriCmds);
-            if(isAI && userPokemons[AI.id] != undefined){
-              var AI_Oricommands = "";
-              var AI_commands = "";
-              if(userPokemons[AI.id].mp >= userPokemons[AI.id].supermoves.energyCost){
-                AI_Oricommands = '22';
-                AI_commands = userPokemons[AI.id].supermove_command + userPokemons[AI.id].supermove_command;
-              }else{
-                var rand1 = Math.floor(Math.random()*4);
+              // just leave AI alone...
+              if(room.isAI && userPokemons[AI.id] != undefined){
+                var AI_Oricommands = "";
+                var AI_commands = "";
+                if(userPokemons[AI.id].mp >= userPokemons[AI.id].supermoves.energyCost){
+                  AI_Oricommands = '22';
+                  AI_commands = userPokemons[AI.id].supermove_command + userPokemons[AI.id].supermove_command;
+                }else{
+                  var rand1 = Math.floor(Math.random()*4);
+                  
+                  var rsp = ['r','s','p'];
+                  switch(rand1){
+                    case 0:
+                      var rand2 = Math.floor(Math.random()*3);
+                      var rand3 = Math.floor(Math.random()*3);
+                      var c1 = rsp[rand2];
+                      var c2 = rsp[rand3];
+                      AI_Oricommands = c1 +'1'+c2+'1';
+                      AI_commands = c1 + userPokemons[AI.id].move_command + c2 + userPokemons[AI.id].move_command;
+                    break;
+                    case 1:
+                      var rand2 = Math.floor(Math.random()*3);
+                      var rand3 = Math.floor(Math.random()*3);
+                      var c1 = rsp[rand2];
+                      var c2 = rsp[rand3];
+                      AI_Oricommands = c1 + c2 +'11';
+                      AI_commands = c1 + c2 + userPokemons[AI.id].move_command + userPokemons[AI.id].move_command;
+                      break;
+                    case 2:
+                      var rand2 = Math.floor(Math.random()*3);
+                      var rand3 = Math.floor(Math.random()*3);
+                      var c1 = rsp[rand2];
+                      var c2 = rsp[rand3];
+                      AI_Oricommands = '1'+c1 + c2 +'1';
+                      AI_commands = userPokemons[AI.id].move_command + c1 + c2 + userPokemons[AI.id].move_command;
+                      break;
+                    case 3:
+                      var rand2 = Math.floor(Math.random()*3);
+                      var rand3 = Math.floor(Math.random()*3);
+                      var c1 = rsp[rand2];
+                      var c2 = rsp[rand3];
+                      AI_Oricommands = '11' + c1 + c2;
+                      AI_commands = userPokemons[AI.id].move_command + userPokemons[AI.id].move_command + c1 + c2;
+                      break;
+                    default:
+                      AI_Oricommands = '111';
+                      AI_commands = userPokemons[AI.id].move_command + userPokemons[AI.id].move_command + userPokemons[AI.id].move_command;
+                      break;
+                  }//end switch
+                }
+                console.log('user',socket.id);
+                console.log('ai',AI.id);
+                room.playerCmds[AI.id] = AI_commands;
+                room.playerOriCmds[AI.id] = AI_Oricommands;
+                console.dir(playerCmds);
+                console.dir(playerOriCmds);
+                var msg = 'AI has entered his commands...';
+                socket.emit('notice',msg);
                 
-                var rsp = ['r','s','p'];
-                switch(rand1){
-                  case 0:
-                    var rand2 = Math.floor(Math.random()*3);
-                    var rand3 = Math.floor(Math.random()*3);
-                    var c1 = rsp[rand2];
-                    var c2 = rsp[rand3];
-                    AI_Oricommands = c1 +'1'+c2+'1';
-                    AI_commands = c1 + userPokemons[AI.id].move_command + c2 + userPokemons[AI.id].move_command;
-                  break;
-                  case 1:
-                    var rand2 = Math.floor(Math.random()*3);
-                    var rand3 = Math.floor(Math.random()*3);
-                    var c1 = rsp[rand2];
-                    var c2 = rsp[rand3];
-                    AI_Oricommands = c1 + c2 +'11';
-                    AI_commands = c1 + c2 + userPokemons[AI.id].move_command + userPokemons[AI.id].move_command;
-                    break;
-                  case 2:
-                    var rand2 = Math.floor(Math.random()*3);
-                    var rand3 = Math.floor(Math.random()*3);
-                    var c1 = rsp[rand2];
-                    var c2 = rsp[rand3];
-                    AI_Oricommands = '1'+c1 + c2 +'1';
-                    AI_commands = userPokemons[AI.id].move_command + c1 + c2 + userPokemons[AI.id].move_command;
-                    break;
-                  case 3:
-                    var rand2 = Math.floor(Math.random()*3);
-                    var rand3 = Math.floor(Math.random()*3);
-                    var c1 = rsp[rand2];
-                    var c2 = rsp[rand3];
-                    AI_Oricommands = '11' + c1 + c2;
-                    AI_commands = userPokemons[AI.id].move_command + userPokemons[AI.id].move_command + c1 + c2;
-                    break;
-                  default:
-                    AI_Oricommands = '111';
-                    AI_commands = userPokemons[AI.id].move_command + userPokemons[AI.id].move_command + userPokemons[AI.id].move_command;
-                    break;
-                }//end switch
-              }
-              console.log('user',socket.id);
-              console.log('ai',AI.id);
-              playerCmds[AI.id] = AI_commands;
-              playerOriCmds[AI.id] = AI_Oricommands;
-              console.dir(playerCmds);
-              console.dir(playerOriCmds);
-              var msg = 'AI has entered his commands...';
-              socket.emit('notice',msg);
-              
 
-            }
+              }//AI
 
-            var len = Object.keys(playerCmds).length;
-            if(len >=2){
-              var msg = "Commands are completed for this round...";
-              socket.emit('notice',msg);
-              var msg = "Results for this round ...";
-              io.emit('notice',msg);
-              var round_res = thisRound(playerCmds,playerOriCmds);
-              // define the variable for the array index
-              var i = 0; //for single
-              var j1 = 0,j2 = 0; //for move
-              var k1 = 0,k2 = 0;//for supermove
 
-              showSingleRes(); // start by calling first delayed function
+              var len = Object.keys(room.playerCmds).length;
+              if(len >= 2){
+                var msg = "Commands are completed for this round...";
+                socket.emit('notice',msg);
+                var msg = "Results for this round ...";
+                roomAnounce(roomid,msg,'notice');
+                var round_res = thisRound(room.playerCmds,room.playerOriCmds); //important variable!
+                // define the variable for the array index
+                var i = 0; //for single
+                var j1 = 0,j2 = 0; //for move
+                var k1 = 0,k2 = 0;//for supermove
 
-              // define the delayed loop function
+                showSingleRes(); // start by calling first delayed function
+
+                // define the delayed loop function
               function showSingleRes()
               {
                 if(++i >= 7)
@@ -769,7 +815,8 @@ io.on('connection', function(socket){
                   current:round_res.cmd2[i-1]
                 }
               }
-              io.emit("single_res",res);
+              roomAnounce(roomid,res,'single_res');
+              // io.emit("single_res",res);
               
               // recursively call the delayed loop function with a delay
               setTimeout(showSingleRes, 1000);
@@ -818,7 +865,9 @@ io.on('connection', function(socket){
                 }
                 // console.log('move1');
                 // console.dir(res);
-                io.emit("move1_res",res);
+                // io.emit("move1_res",res);
+                roomAnounce(roomid,res,'move1_res');
+
                 setTimeout(showMoveRes1, 1000);
               }
 
@@ -865,7 +914,8 @@ io.on('connection', function(socket){
                 }
                 // console.log('move2');
                 // console.dir(res);
-                io.emit("move2_res",res);
+                // io.emit("move2_res",res);
+                roomAnounce(roomid,res,'move2_res');
                 setTimeout(showMoveRes2, 1000);
               }
 
@@ -874,11 +924,16 @@ io.on('connection', function(socket){
                   if(!battleOn(round_res.user1,round_res.user2)){
                     var winner = battleWinner(round_res.user1,round_res.user2);
                     var notice = "<span class = 'glyphicon glyphicon-queen gold'></span> Battle ends! The winner is <b>"+userPokemons[winner].username+'</b>';
-                    io.emit('notice',notice);
-                    userPokemons = {};
-                    vs = {};
+                    roomAnounce(roomid,notice,'notice');
+                    
                     var notice = "Enter # to prepare for another battle!";
-                    io.emit('notice',notice);
+                    roomAnounce(roomid,notice,'notice');
+                    for(var i = 0; i < room.players.length; i++){
+                      var player = room.players[i];
+                      delete userPokemons[player];
+                      delete userStatus[player];
+                    }
+                    delete vs[room.id];
                   }else{
                     showSupermoveRes2(); //next show user2 supermove
                   }
@@ -921,7 +976,7 @@ io.on('connection', function(socket){
                     pokemon:userPokemons[user2],
                   }
                 }
-                io.emit("supermove1_res",res);
+                roomAnounce(roomid,res,'supermove1_res');
                 setTimeout(showSupermoveRes1, 1000);
               }
 
@@ -929,18 +984,22 @@ io.on('connection', function(socket){
                 if(++k2 >= round_res.supermove2.length+1){
                   //end of all moves result. clear battle buffer
                   if(battleOn(round_res.user1,round_res.user2)){
-                    playerCmds = {};
-                    playerOriCmds = {};
+                    room.playerCmds = {};
+                    room.playerOriCmds = {};
                     var notice = "please enter your battle command: ";
-                    io.emit('notice',notice);
+                    roomAnounce(roomid,notice,'notice');
                   }else{
                     var winner = battleWinner(round_res.user1,round_res.user2);
                     var notice = "<span class = 'glyphicon glyphicon-queen gold'></span> Battle ends! The winner is <b>"+userPokemons[winner].username+'</b>';
-                    io.emit('notice',notice);
-                    userPokemons = {};
-                    vs = {};
+                    roomAnounce(roomid,notice,'notice');
+                    for(var i = 0; i < room.players.length; i++){
+                      var player = room.players[i];
+                      delete userPokemons[player];
+                      delete userStatus[player];
+                    }
                     var notice = "Enter # to prepare for another battle!";
-                    io.emit('notice',notice);
+                    roomAnounce(roomid,notice,'notice');
+                    delete vs[roomid];
                   }
                   
                   return;
@@ -981,18 +1040,19 @@ io.on('connection', function(socket){
                     status:round_res.supermove2[k2-1],
                   }
                 }
-                io.emit("supermove2_res",res);
+                roomAnounce(roomid,res,'supermove2_res');
+                // io.emit("supermove2_res",res);
                 setTimeout(showSupermoveRes2, 1000);
               }
 
-
-            }else if(len == 1){
-              var msg = "Waiting for opponent's commands ...";
-              socket.emit('notice',msg);
-            }
+              }else if(len == 1){
+                var msg = "Waiting for opponent's commands ...";
+                socket.emit('notice',msg);
+              }
+            } //everything should be inside this {}
 
           }
-        }
+        } //end of else ##
 
         break;
       case '?':
