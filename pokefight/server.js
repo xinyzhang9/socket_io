@@ -35,7 +35,7 @@ function roomAnounce(roomid,msg,type){
   var room = vs[roomid];
   for(var i = 0; i < room.players.length; i++){
     var player = room.players[i];
-    io.sockets.socket(player).emit(type,msg);
+    io.to(player).emit(type,msg);
   }
 }
 
@@ -442,35 +442,37 @@ io.on('connection', function(socket){
     delete userPokemons[socket.id];
 
     //find user's room
-    if(userStatus[socket.id].status == 'home'){ //user is room owner
-      var room = vs[socket.id];
-      if(room.status == 'waiting'){ //room only contains one player
-        delete vs[socket.id]; //just delete this room
-      }else if(room.status == 'full'){ //room contains two players
+    if(userStatus[socket.id] !== undefined){
+      if(userStatus[socket.id].status == 'home'){ //user is room owner
+        var room = vs[userStatus[socket.id].roomId];
+        if(room.status == 'waiting'){ //room only contains one player
+          delete vs[userStatus[socket.id].roomId];; //just delete this room
+        }else if(room.status == 'full'){ //room contains two players
+          var playerIndex = room.players.indexOf(socket.id);
+          room.players.splice(playerIndex,1); //delete user from playerlist
+          room.status = 'waiting';
+          room.ownner = room.players[0]; //transfer ownnership to another user
+          userStatus[room.ownner] = Object.assign(userStatus[room.ownner],{status:'home'}); //change home ownner's userStatus
+          delete room.playerCmds[socket.id];
+          delete room.playerOriCmds[socket.id]; //delete user commands
+          delete room.pokemons[socket.id]; //delete room's pokemon
+        }
+        
+      }else if(userStatus[socket.id].status == 'guest'){ //user is room guest
+        var room = vs[userStatus[socket.id].roomId];
+        //this room must have 2 players! otherwise the user status is 'home'
         var playerIndex = room.players.indexOf(socket.id);
-        room.players.splice(playerIndex,1); //delete user from playerlist
+        room.players.splice(playerIndex,1);
         room.status = 'waiting';
-        room.ownner = room.players[0]; //transfer ownnership to another user
-        userStatus[room.ownner] = 'home'; //change home ownner's userStatus
         delete room.playerCmds[socket.id];
         delete room.playerOriCmds[socket.id]; //delete user commands
         delete room.pokemons[socket.id]; //delete room's pokemon
       }
-      
-    }else if(userStatus[socket.id].status == 'guest'){ //user is room guest
-      var room = vs[userStatus[socket.id].roomId];
-      //this room must have 2 players! otherwise the user status is 'home'
-      var playerIndex = room.players.indexOf(socket.id);
-      room.players.splice(playerIndex,1);
-      room.status = 'waiting';
-      delete room.playerCmds[socket.id];
-      delete room.playerOriCmds[socket.id]; //delete user commands
-      delete room.pokemons[socket.id]; //delete room's pokemon
-    }else{ // user hasn't entered a room yet, just delete him
-      //
     }
 
     delete userStatus[socket.id]; //final step, delete his status
+
+    console.dir(userStatus);
   	
   	io.emit('left room',msg);
   });
@@ -544,29 +546,30 @@ io.on('connection', function(socket){
   
   socket.on('confirm',function(){
     //first, try to join other available rooms
+    
     if(userStatus[socket.id] == undefined){
       for(var room in vs){
-        if(vs[room].status = 'waiting'){
+        if(vs[room].status == 'waiting'){
           vs[room].players.push(socket.id); //push user to playerList
           vs[room].status = 'full';
           userStatus[socket.id] = {
                                     status:"guest",
-                                    roomId:room
+                                    roomId:vs[room].id
                                   };
           vs[room].pokemons[socket.id] = userPokemons[socket.id];
           //send msg to 2 users in this room
           for(var i = 0; i < vs[room].players; i++){
             var player = vs[room].players[i];
             var msg = "System Message: Battle Begins!";
-            io.sockets.socket(player).emit('notice',msg);
-            io.sockets.socket(player).emit('begin',vs[room].pokemons);
+            io.sockets.to(player).emit('notice',msg);
+            io.sockets.to(player).emit('begin',vs[room].pokemons);
             var msg = "Please enter your battle commands ...(enter ? to see instructions)";
-            io.sockets.socket(player).emit('notice',msg);
+            io.sockets.to(player).emit('notice',msg);
           }
-
           break;
         }
       }
+      console.dir(userStatus);
     }
     //otherwise, create new room
     if(userStatus[socket.id] == undefined){
@@ -594,6 +597,7 @@ io.on('connection', function(socket){
       socket.emit('notice',msg);
 
     }
+    console.dir(userStatus);
   });
   
 
