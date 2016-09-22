@@ -21,12 +21,14 @@ var nicknames = {};
 var userImgs = {}
 var userColors = {};
 var userPokemons = {};
-var vs = {}; //1 vs 1
-//initialize commands object
-var playerCmds = {};
-var playerOriCmds = {};
+var vs = {}; //contains all battle rooms!!!
+var userStatus = {}; //record user status
 
-var isAI = false;
+//initialize commands object
+// var playerCmds = {};
+// var playerOriCmds = {};
+
+// var isAI = false;
 
 //utility functions
 function battleOn(user1,user2){
@@ -91,14 +93,6 @@ function displayMP(user){
   return res;
 }
 
-function sleep(milliseconds) {
-  var start = new Date().getTime();
-  for (var i = 0; i < 1e7; i++) {
-    if ((new Date().getTime() - start) > milliseconds){
-      break;
-    }
-  }
-}
 
 function calcDamage(source,target,type){
   var dmg = 0;
@@ -438,9 +432,37 @@ io.on('connection', function(socket){
   	delete userImgs[socket.id];
   	delete userColors[socket.id];
     delete userPokemons[socket.id];
-    delete vs[socket.id];
-    delete playerCmds[socket.id];
-    delete playerOriCmds[socket.id];
+
+    //find user's room
+    if(userStatus[socket.id].status == 'home'){ //user is room owner
+      var room = vs[socket.id];
+      if(room.status == 'waiting'){ //room only contains one player
+        delete vs[socket.id]; //just delete this room
+      }else if(room.status == 'full'){ //room contains two players
+        var playerIndex = room.players.indexOf(socket.id);
+        room.players.splice(playerIndex,1); //delete user from playerlist
+        room.status = 'waiting';
+        room.ownner = room.players[0]; //transfer ownnership to another user
+        userStatus[room.ownner] = 'home'; //change home ownner's userStatus
+        delete room.playerCmds[socket.id];
+        delete room.playerOriCmds[socket.id]; //delete user commands
+        delete room.pokemons[socket.id]; //delete room's pokemon
+      }
+      
+    }else if(userStatus[socket.id].status == 'guest'){ //user is room guest
+      var room = vs[userStatus[socket.id].roomId];
+      //this room must have 2 players! otherwise the user status is 'home'
+      var playerIndex = room.players.indexOf(socket.id);
+      room.players.splice(playerIndex,1);
+      room.status = 'waiting';
+      delete room.playerCmds[socket.id];
+      delete room.playerOriCmds[socket.id]; //delete user commands
+      delete room.pokemons[socket.id]; //delete room's pokemon
+    }else{ // user hasn't entered a room yet, just delete him
+      //
+    }
+
+    delete userStatus[socket.id]; //final step, delete his status
   	
   	io.emit('left room',msg);
   });
@@ -513,25 +535,57 @@ io.on('connection', function(socket){
   });
   
   socket.on('confirm',function(){
-    var len = Object.keys(vs).length;
-    if(len >= 2){
-      var msg = "System Message: Unable to join the battle. Queue is full.";
-      socket.emit('notice',msg);
-    }else if (len == 0){
-      vs[socket.id] = Object.assign({},userPokemons[socket.id]);
+    //first, try to join other available rooms
+    if(userStatus[socket.id] == undefined){
+      for(var room in vs){
+        if(vs[room].status = 'waiting'){
+          vs[room].players.push(socket.id); //push user to playerList
+          vs[room].status = 'full';
+          userStatus[socket.id] = {
+                                    status:"guest",
+                                    roomId:room
+                                  };
+          vs[room].pokemons[socket.id] = userPokemons[socket.id];
+          //send msg to 2 users in this room
+          for(var i = 0; i < vs[room].players; i++){
+            var player = vs[room].players[i];
+            var msg = "System Message: Battle Begins!";
+            io.sockets.socket(player).emit('notice',msg);
+            io.sockets.socket(player).emit('begin',vs[room].pokemons);
+            var msg = "Please enter your battle commands ...(enter ? to see instructions)";
+            io.sockets.socket(player).emit('notice',msg);
+          }
+
+          break;
+        }
+      }
+    }
+    //otherwise, create new room
+    if(userStatus[socket.id] == undefined){
+      var players = [];
+      players.push(socket.id);
+      var playerCmds = {};
+      var playerOriCmds = {};
+      var pokemons = {};
+      pokemons[socket.id] = userPokemons[socket.id];
+      vs[socket.id] = {
+        players: players,
+        status: 'waiting',
+        ownner: socket.id,
+        playerCmds: playerCmds,
+        playerOriCmds: playerOriCmds,
+        isAI: false,
+        pokemons: pokemons
+      };
+      userStatus[socket.id] = {
+                                status:"home",
+                                roomId:socket.id
+                              };
       var msg = "System Message: Waiting for the opponent ...";
       socket.emit('notice',msg);
-    }else{
-      //begin fight
-      vs[socket.id] = Object.assign({},userPokemons[socket.id]);
-      var msg = "System Message: Battle Begins!";
-      socket.emit('notice',msg);
-      console.dir(vs);
-      io.emit('begin',vs);
-      var msg = "Please enter your battle commands ...(enter ? to see instructions)";
-      io.emit('notice',msg);
+
     }
-})
+  });
   
 
   socket.on('chat message', function(msg){
@@ -578,32 +632,6 @@ io.on('connection', function(socket){
           userPokemons[socket.id] = res;
           socket.emit('info',res);
         }
-        break;
-      case '!': //confirm pokemon
-        if(!userPokemons[socket.id]){ //undefined
-          var msg = "System Message: You should input '#' first to choose a pokemon!";
-          socket.emit('notice',msg);
-        }else{
-          var len = Object.keys(vs).length;
-          if(len >= 2){
-            var msg = "System Message: Unable to join the battle. Queue is full.";
-            socket.emit('notice',msg);
-          }else if (len == 0){
-            vs[socket.id] = Object.assign({},userPokemons[socket.id]);
-            var msg = "System Message: Waiting for the opponent ...";
-            socket.emit('notice',msg);
-          }else{
-            //begin fight
-            vs[socket.id] = Object.assign({},userPokemons[socket.id]);
-            var msg = "System Message: Battle Begins!";
-            socket.emit('notice',msg);
-            console.dir(vs);
-            io.emit('begin',vs);
-            var msg = "Please enter your battle commands ...(enter ? to see instructions)";
-            io.emit('notice',msg);
-          }
-        }
-               
         break;
       case '@':
         if(!userPokemons[socket.id]){ //undefined
