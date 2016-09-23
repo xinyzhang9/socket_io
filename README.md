@@ -31,6 +31,9 @@ open your browser at localhost:3000
 
 ## pokemon fighting game
 This is the round based fighting game realized via socket.io. User can have a pvp or pve battle via the pokemons. The game engine is the game theory of rock-scissor-paper. The pokemon can release supermoves if its moves are not overtaken by the opponents for certain rounds.  
+
+### live
+http://162.243.159.24/
 ### basic features
 - [x] normal chat/notice channel
 - [x] generate random pokemon candidates
