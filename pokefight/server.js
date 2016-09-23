@@ -24,12 +24,6 @@ var userPokemons = {};
 var vs = {}; //contains all battle rooms!!!
 var userStatus = {}; //record user status
 
-//initialize commands object
-// var playerCmds = {};
-// var playerOriCmds = {};
-
-// var isAI = false;
-
 //utility functions
 function roomAnounce(roomid,msg,type){
   var room = vs[roomid];
@@ -992,7 +986,7 @@ io.on('connection', function(socket){
                   if(battleOn(round_res.user1,round_res.user2)){
                     room.playerCmds = {};
                     room.playerOriCmds = {};
-                    var notice = "please enter your battle command: ";
+                    var notice = "please enter your battle commands(enter ? to see instructions): ";
                     roomAnounce(roomid,notice,'notice');
                   }else{
                     var winner = battleWinner(round_res.user1,round_res.user2);
